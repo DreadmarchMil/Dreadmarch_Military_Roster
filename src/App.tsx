@@ -3,7 +3,7 @@ import { useKV } from '@github/spark/hooks'
 import { Plus } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Toaster, toast } from 'sonner'
-import { PersonnelCard } from '@/components/PersonnelCard'
+import { PersonnelRosterList } from '@/components/PersonnelRosterList'
 import { PersonnelForm } from '@/components/PersonnelForm'
 import { PersonnelDetails } from '@/components/PersonnelDetails'
 import { DeleteConfirmation } from '@/components/DeleteConfirmation'
@@ -118,17 +118,10 @@ function App() {
         {rosterList.length === 0 ? (
           <EmptyState onAddClick={handleAdd} />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {rosterList.map((person) => (
-              <PersonnelCard
-                key={person.id}
-                personnel={person}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onClick={handleCardClick}
-              />
-            ))}
-          </div>
+          <PersonnelRosterList 
+            personnel={rosterList} 
+            onRowClick={handleCardClick}
+          />
         )}
       </main>
 
