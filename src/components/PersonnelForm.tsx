@@ -128,19 +128,19 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="callsign" className="text-xs uppercase tracking-wide text-muted-foreground">
-                Callsign
-              </Label>
-              <Input
-                id="callsign"
-                value={formData.callsign}
-                onChange={(e) => setFormData({ ...formData, callsign: e.target.value })}
-                className="bg-background border-input focus:border-ring focus:ring-ring"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="callsign" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Callsign
+            </Label>
+            <Input
+              id="callsign"
+              value={formData.callsign}
+              onChange={(e) => setFormData({ ...formData, callsign: e.target.value })}
+              className="bg-background border-input focus:border-ring focus:ring-ring"
+            />
+          </div>
 
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="rank" className="text-xs uppercase tracking-wide text-muted-foreground">
                 Rank
@@ -152,18 +152,19 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
                 className="bg-background border-input focus:border-ring focus:ring-ring"
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="grade" className="text-xs uppercase tracking-wide text-muted-foreground">
-              Grade
-            </Label>
-            <Input
-              id="grade"
-              value={formData.grade}
-              onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-              className="bg-background border-input focus:border-ring focus:ring-ring"
-            />
+            <div className="space-y-2">
+              <Label htmlFor="grade" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Grade
+              </Label>
+              <Input
+                id="grade"
+                type="number"
+                value={formData.grade}
+                onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                className="bg-background border-input focus:border-ring focus:ring-ring"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
