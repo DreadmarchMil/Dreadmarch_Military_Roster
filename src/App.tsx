@@ -28,7 +28,25 @@ function App() {
 
   const isGM = userRole === 'gm'
   const currentUnit = units?.find(u => u.id === currentUnitId) || DEFAULT_UNITS[0]
-  const personnel = personnelByUnit?.[currentUnitId || DEFAULT_UNITS[0].id] || []
+  
+  const getChildUnitIds = (unitId: string): string[] => {
+    const childIds: string[] = []
+    const children = units?.filter(u => u.parentId === unitId) || []
+    for (const child of children) {
+      childIds.push(child.id)
+      childIds.push(...getChildUnitIds(child.id))
+    }
+    return childIds
+  }
+  
+  const getPersonnelForUnit = (unitId: string): Personnel[] => {
+    const currentUnitPersonnel = personnelByUnit?.[unitId] || []
+    const childUnitIds = getChildUnitIds(unitId)
+    const childPersonnel = childUnitIds.flatMap(childId => personnelByUnit?.[childId] || [])
+    return [...currentUnitPersonnel, ...childPersonnel]
+  }
+  
+  const personnel = getPersonnelForUnit(currentUnitId || DEFAULT_UNITS[0].id)
 
   const updatePersonnelForCurrentUnit = (updater: (current: Personnel[]) => Personnel[]) => {
     setPersonnelByUnit(current => {
