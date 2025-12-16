@@ -1,8 +1,25 @@
 {
-    "name": "spark-template",
+    "name": "dreadmarch-military-roster",
     "private": true,
-    "version": "0.0.0",
+    "version": "1.0.0",
+    "description": "A personnel management database for Star Wars Sith Empire roleplay community with immersive Imperial aesthetics",
     "type": "module",
+    "author": "DreadmarchMil",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DreadmarchMil/Dreadmarch_Military_Roster.git"
+    },
+    "homepage": "https://dreadmarchmil.github.io/Dreadmarch_Military_Roster/",
+    "keywords": [
+        "star-wars",
+        "roleplay",
+        "military-roster",
+        "personnel-management",
+        "sith-empire",
+        "react",
+        "typescript",
+        "vite"
+    ],
     "scripts": {
         "dev": "vite",
         "kill": "fuser -k 5000/tcp",
