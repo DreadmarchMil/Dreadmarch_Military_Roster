@@ -72,6 +72,10 @@ function App() {
             needsUpdate = true
             personUpdated.gender = ''
           }
+          if (!person.grade) {
+            needsUpdate = true
+            personUpdated.grade = ''
+          }
           return personUpdated
         })
         updated[unitId] = updatedPersonnel

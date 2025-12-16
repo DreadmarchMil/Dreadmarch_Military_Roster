@@ -3,6 +3,7 @@ export interface Personnel {
   name: string
   callsign: string
   rank: string
+  grade: string
   role: string
   specialty: string
   species: string

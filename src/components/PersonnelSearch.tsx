@@ -168,7 +168,20 @@ export function PersonnelSearch({
         <PopoverContent className="w-80 bg-card border-primary/30" align="end">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold uppercase tracking-wide text-sm">Filters</h3>
+              <div className="flex items-center gap-3">
+                <h3 className="font-bold uppercase tracking-wide text-sm">Filters</h3>
+                <div className="flex items-center gap-1.5">
+                  <Checkbox
+                    id="show-inactive"
+                    checked={filters.showInactive}
+                    onCheckedChange={handleShowInactiveToggle}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-inactive" className="text-[10px] text-muted-foreground cursor-pointer uppercase tracking-wide">
+                    Show Inactive
+                  </Label>
+                </div>
+              </div>
               {hasActiveFilters && (
                 <Button
                   variant="ghost"
@@ -180,18 +193,6 @@ export function PersonnelSearch({
                   Clear
                 </Button>
               )}
-            </div>
-
-            <div className="flex items-center justify-between py-1 px-2 bg-muted/20 rounded">
-              <Label htmlFor="show-inactive" className="text-xs text-muted-foreground cursor-pointer">
-                Show Inactive
-              </Label>
-              <Checkbox
-                id="show-inactive"
-                checked={filters.showInactive}
-                onCheckedChange={handleShowInactiveToggle}
-                className="scale-90"
-              />
             </div>
 
             <div className="space-y-3">

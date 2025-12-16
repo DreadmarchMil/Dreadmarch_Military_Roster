@@ -21,6 +21,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
     name: '',
     callsign: '',
     rank: '',
+    grade: '',
     role: '',
     specialty: '',
     species: '',
@@ -46,6 +47,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         name: personnel.name,
         callsign: personnel.callsign,
         rank: personnel.rank,
+        grade: personnel.grade || '',
         role: personnel.role,
         specialty: personnel.specialty,
         species: personnel.species,
@@ -61,6 +63,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         name: '',
         callsign: '',
         rank: '',
+        grade: '',
         role: '',
         specialty: '',
         species: '',
@@ -149,6 +152,18 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
                 className="bg-background border-input focus:border-ring focus:ring-ring"
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="grade" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Grade
+            </Label>
+            <Input
+              id="grade"
+              value={formData.grade}
+              onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+              className="bg-background border-input focus:border-ring focus:ring-ring"
+            />
           </div>
 
           <div className="space-y-2">
