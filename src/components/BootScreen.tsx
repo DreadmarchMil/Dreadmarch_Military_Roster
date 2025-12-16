@@ -28,6 +28,18 @@ export function BootScreen({ onComplete }: BootScreenProps) {
   const [bootComplete, setBootComplete] = useState(false)
 
   useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault()
+        onComplete()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [onComplete])
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       if (currentStep < bootSequence.length - 1) {
         setCurrentStep(currentStep + 1)
@@ -118,6 +130,15 @@ export function BootScreen({ onComplete }: BootScreenProps) {
               </Button>
             </motion.div>
           )}
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            transition={{ duration: 0.5, delay: 1 }}
+            className="absolute bottom-8 left-0 right-0 text-center text-muted-foreground text-xs"
+          >
+            Press <span className="text-accent font-semibold">SPACEBAR</span> to skip
+          </motion.div>
         </div>
       </motion.div>
     </AnimatePresence>
