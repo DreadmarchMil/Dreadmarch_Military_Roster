@@ -168,13 +168,20 @@ function App() {
       <div className="border-b-2 border-primary/30 bg-card/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between gap-4">
-            <div>
+            <div className="flex-1">
               <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wider text-primary">
                 Dreadmarch Military Personnel Database
               </h1>
-              <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide mt-1">
-                {currentUnit.name} Personnel List — Classified Access
-              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <UnitSwitcher 
+                  units={units || DEFAULT_UNITS}
+                  currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
+                  onUnitChange={setCurrentUnitId}
+                />
+                <span className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide whitespace-nowrap">
+                  Personnel List — Classified Access
+                </span>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <Button
@@ -207,13 +214,6 @@ function App() {
                 </Button>
               )}
             </div>
-          </div>
-          <div className="mt-4">
-            <UnitSwitcher 
-              units={units || DEFAULT_UNITS}
-              currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
-              onUnitChange={setCurrentUnitId}
-            />
           </div>
         </div>
       </div>
