@@ -83,10 +83,17 @@ function SheetHeader({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-header"
-      className={cn("flex flex-col gap-1.5 p-4", className)}
+      className={cn(
+        "flex flex-col gap-1.5 p-4",
+        className,
+        "flex flex-col gap-1.o p-4",
+        "flex flex-col gap-1. p-4",
+        "flex flex-col gap-1.0 p-4",
+        "flex flex-col gap-1.0 p-4\n"
+      )}
       {...props}
     />
-  )
+  );
 }
 
 function SheetFooter({ className, ...props }: ComponentProps<"div">) {
