@@ -32,17 +32,17 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="bg-card border-l-2 border-primary/30 w-full sm:max-w-lg overflow-y-auto p-6">
         <SheetHeader>
-          <SheetTitle className="text-xl font-bold uppercase tracking-wider text-primary">
+          <SheetTitle className="text-base font-bold uppercase tracking-wider text-primary">
             PERSONNEL FILE
           </SheetTitle>
-          <div className="h-px bg-primary/30 mt-2" />
+          <div className="h-px bg-primary/30 mt-1" />
         </SheetHeader>
 
-        <div className="space-y-4 mt-1">
+        <div className="space-y-4 mt-2">
           <div className="space-y-0.5">
             <div>
-              <div className="text-lg font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">{personnel.rank || '—'}</div>
-              <h2 className="text-2xl font-bold text-foreground mb-1">{personnel.name}</h2>
+              <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{personnel.rank || '—'}</div>
+              <h2 className="text-xl font-bold text-foreground mb-1">{personnel.name}</h2>
               <div className="flex items-center gap-2">
                 {isGM && onStatusChange ? (
                   <Select 
