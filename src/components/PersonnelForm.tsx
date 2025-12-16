@@ -25,10 +25,19 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
     specialty: '',
     species: '',
     assignedUnit: '',
+    secondment: '',
     status: 'available',
     characterType: 'pc',
     notes: ''
   })
+
+  const getChildUnits = (parentUnitName: string): Unit[] => {
+    const parentUnit = units.find(u => u.name === parentUnitName)
+    if (!parentUnit) return []
+    return units.filter(u => u.parentId === parentUnit.id)
+  }
+
+  const childUnits = formData.assignedUnit ? getChildUnits(formData.assignedUnit) : []
 
   useEffect(() => {
     if (personnel) {
@@ -40,6 +49,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         specialty: personnel.specialty,
         species: personnel.species,
         assignedUnit: personnel.assignedUnit,
+        secondment: personnel.secondment || '',
         status: personnel.status,
         characterType: personnel.characterType,
         notes: personnel.notes
@@ -53,6 +63,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         specialty: '',
         species: '',
         assignedUnit: '',
+        secondment: '',
         status: 'available',
         characterType: 'pc',
         notes: ''
@@ -202,7 +213,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
             </Label>
             <Select
               value={formData.assignedUnit}
-              onValueChange={(value) => setFormData({ ...formData, assignedUnit: value })}
+              onValueChange={(value) => setFormData({ ...formData, assignedUnit: value, secondment: '' })}
             >
               <SelectTrigger id="assignedUnit" className="bg-background border-input">
                 <SelectValue placeholder="Select unit" />
@@ -216,6 +227,30 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
               </SelectContent>
             </Select>
           </div>
+
+          {childUnits.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="secondment" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Secondment
+              </Label>
+              <Select
+                value={formData.secondment}
+                onValueChange={(value) => setFormData({ ...formData, secondment: value })}
+              >
+                <SelectTrigger id="secondment" className="bg-background border-input">
+                  <SelectValue placeholder="None" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border">
+                  <SelectItem value="">None</SelectItem>
+                  {sortUnits(childUnits).map((unit) => (
+                    <SelectItem key={unit.id} value={unit.name}>
+                      {unit.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="notes" className="text-xs uppercase tracking-wide text-muted-foreground">

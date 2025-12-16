@@ -7,6 +7,7 @@ export interface Personnel {
   specialty: string
   species: string
   assignedUnit: string
+  secondment?: string
   status: 'available' | 'deployed' | 'inactive' | 'wia' | 'kia'
   characterType: 'pc' | 'npc'
   notes: string
@@ -27,7 +28,8 @@ export const DEFAULT_UNITS: Unit[] = [
   { id: '4th-sof', name: '4th Special Operations Brigade' },
   { id: '17th-assault', name: '17th Assault Group', parentId: '4th-sof' },
   { id: 'vornskr-company', name: 'Vornskr Company', parentId: '17th-assault' },
-  { id: 'imperial-reclamation', name: 'Imperial Reclamation Service Detachment', parentId: '17th-assault' },
+  { id: 'imperial-reclamation', name: 'Imperial Reclamation Service Detachment', parentId: 'vornskr-company' },
+  { id: 'imperial-conquest', name: 'Imperial Conquest Consolidation Corps', parentId: 'vornskr-company' },
   { id: 'iss-beaumont', name: 'I.S.S. Beaumont Hill', parentId: '17th-assault' },
   { id: 'dagger-squadron', name: 'Dagger Squadron', parentId: '17th-assault' },
   { id: 'warrior-cadre', name: 'Warrior Cadre', parentId: '17th-assault' },

@@ -41,6 +41,15 @@ function App() {
     if (units && units.length < DEFAULT_UNITS.length) {
       setUnits(DEFAULT_UNITS)
     }
+    if (units) {
+      const needsUpdate = DEFAULT_UNITS.some(defaultUnit => {
+        const existingUnit = units.find(u => u.id === defaultUnit.id)
+        return !existingUnit || existingUnit.parentId !== defaultUnit.parentId
+      })
+      if (needsUpdate) {
+        setUnits(DEFAULT_UNITS)
+      }
+    }
   }, [units, setUnits])
 
   useEffect(() => {
@@ -83,7 +92,14 @@ function App() {
     const currentUnitPersonnel = personnelByUnit?.[unitId] || []
     const childUnitIds = getChildUnitIds(unitId)
     const childPersonnel = childUnitIds.flatMap(childId => personnelByUnit?.[childId] || [])
-    return [...currentUnitPersonnel, ...childPersonnel]
+    
+    const allUnitsPersonnel = Object.values(personnelByUnit || {}).flat()
+    const secondedPersonnel = allUnitsPersonnel.filter(p => p.secondment === unitId)
+    
+    const allPersonnel = [...currentUnitPersonnel, ...childPersonnel, ...secondedPersonnel]
+    const uniquePersonnel = Array.from(new Map(allPersonnel.map(p => [p.id, p])).values())
+    
+    return uniquePersonnel
   }
   
   const allPersonnel = getPersonnelForUnit(currentUnitId || DEFAULT_UNITS[0].id)

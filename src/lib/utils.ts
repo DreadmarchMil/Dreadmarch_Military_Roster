@@ -12,6 +12,7 @@ const UNIT_ORDER = [
   '17th-assault',
   'vornskr-company',
   'imperial-reclamation',
+  'imperial-conquest',
   'iss-beaumont',
   'dagger-squadron',
   'warrior-cadre',
