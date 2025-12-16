@@ -168,9 +168,22 @@ function App() {
   const confirmDelete = () => {
     if (deletingId) {
       const person = allPersonnel?.find(p => p.id === deletingId)
-      updatePersonnelForCurrentUnit(currentPersonnel => 
-        currentPersonnel.filter(p => p.id !== deletingId)
-      )
+      
+      setPersonnelByUnit(current => {
+        const allUnits = { ...(current || {}) }
+        
+        for (const unitId in allUnits) {
+          const unitPersonnel = allUnits[unitId]
+          const filtered = unitPersonnel.filter(p => p.id !== deletingId)
+          if (filtered.length !== unitPersonnel.length) {
+            allUnits[unitId] = filtered
+            break
+          }
+        }
+        
+        return allUnits
+      })
+      
       toast.success('Personnel record deleted', {
         description: person ? `${person.name} removed from database` : 'Record removed'
       })
@@ -180,11 +193,29 @@ function App() {
 
   const handleSubmit = (data: PersonnelFormData) => {
     if (editingPersonnel) {
-      updatePersonnelForCurrentUnit(currentPersonnel =>
-        currentPersonnel.map(p =>
-          p.id === editingPersonnel.id ? { ...data, id: editingPersonnel.id } : p
-        )
-      )
+      const updatedPerson = { ...data, id: editingPersonnel.id }
+      
+      setPersonnelByUnit(current => {
+        const allUnits = { ...(current || {}) }
+        let found = false
+        
+        for (const unitId in allUnits) {
+          const unitPersonnel = allUnits[unitId]
+          const index = unitPersonnel.findIndex(p => p.id === editingPersonnel.id)
+          if (index !== -1) {
+            allUnits[unitId] = [
+              ...unitPersonnel.slice(0, index),
+              updatedPerson,
+              ...unitPersonnel.slice(index + 1)
+            ]
+            found = true
+            break
+          }
+        }
+        
+        return allUnits
+      })
+      
       toast.success('Personnel record updated', {
         description: `${data.name} has been updated`
       })

@@ -26,7 +26,7 @@ export const DEFAULT_UNITS: Unit[] = [
   { id: '4th-sof', name: '4th Special Operations Brigade' },
   { id: '17th-assault', name: '17th Assault Group', parentId: '4th-sof' },
   { id: 'vornskr-company', name: 'Vornskr Company', parentId: '17th-assault' },
-  { id: 'imperial-reclamation', name: 'Imperial Reclamation Service', parentId: '17th-assault' },
+  { id: 'imperial-reclamation', name: 'Imperial Reclamation Service Detachment', parentId: '17th-assault' },
   { id: 'iss-beaumont', name: 'I.S.S. Beaumont Hill', parentId: '17th-assault' },
   { id: 'dagger-squadron', name: 'Dagger Squadron', parentId: '17th-assault' },
   { id: 'warrior-cadre', name: 'Warrior Cadre', parentId: '17th-assault' },
