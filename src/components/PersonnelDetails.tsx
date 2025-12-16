@@ -48,7 +48,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     value={personnel.status} 
                     onValueChange={(value) => onStatusChange(personnel.id, value as Personnel['status'])}
                   >
-                    <SelectTrigger className={`h-6 w-auto text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2`}>
+                    <SelectTrigger className={`h-6 w-[110px] text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -60,7 +60,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     </SelectContent>
                   </Select>
                 ) : (
-                  <Badge className={`h-6 flex items-center text-xs uppercase tracking-wider border ${statusColors[personnel.status]}`}>
+                  <Badge className={`h-6 flex items-center text-xs uppercase tracking-wider border w-[110px] justify-center ${statusColors[personnel.status]}`}>
                     {personnel.status}
                   </Badge>
                 )}
