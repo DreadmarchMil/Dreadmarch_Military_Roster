@@ -24,6 +24,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
     role: '',
     specialty: '',
     species: '',
+    gender: '',
     assignedUnit: '',
     secondment: '',
     status: 'available',
@@ -48,6 +49,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         role: personnel.role,
         specialty: personnel.specialty,
         species: personnel.species,
+        gender: personnel.gender,
         assignedUnit: personnel.assignedUnit,
         secondment: personnel.secondment || '',
         status: personnel.status,
@@ -62,6 +64,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         role: '',
         specialty: '',
         species: '',
+        gender: '',
         assignedUnit: '',
         secondment: '',
         status: 'available',
@@ -195,16 +198,30 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="species" className="text-xs uppercase tracking-wide text-muted-foreground">
-              Species
-            </Label>
-            <Input
-              id="species"
-              value={formData.species}
-              onChange={(e) => setFormData({ ...formData, species: e.target.value })}
-              className="bg-background border-input focus:border-ring focus:ring-ring"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="species" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Species
+              </Label>
+              <Input
+                id="species"
+                value={formData.species}
+                onChange={(e) => setFormData({ ...formData, species: e.target.value })}
+                className="bg-background border-input focus:border-ring focus:ring-ring"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="gender" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Gender
+              </Label>
+              <Input
+                id="gender"
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                className="bg-background border-input focus:border-ring focus:ring-ring"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">

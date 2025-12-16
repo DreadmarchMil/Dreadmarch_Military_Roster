@@ -62,11 +62,16 @@ function App() {
       for (const unitId in personnelByUnit) {
         const unitPersonnel = personnelByUnit[unitId]
         const updatedPersonnel = unitPersonnel.map(person => {
+          let personUpdated = { ...person }
           if (!person.characterType) {
             needsUpdate = true
-            return { ...person, characterType: 'pc' as const }
+            personUpdated.characterType = 'pc' as const
           }
-          return person
+          if (!person.gender) {
+            needsUpdate = true
+            personUpdated.gender = ''
+          }
+          return personUpdated
         })
         updated[unitId] = updatedPersonnel
       }
