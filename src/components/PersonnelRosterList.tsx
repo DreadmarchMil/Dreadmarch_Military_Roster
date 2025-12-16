@@ -54,7 +54,7 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
       case 'rank':
         aValue = parseInt(a.grade) || 0
         bValue = parseInt(b.grade) || 0
-        compareResult = (bValue as number) - (aValue as number)
+        compareResult = (aValue as number) - (bValue as number)
         if (compareResult === 0) {
           return a.name.localeCompare(b.name)
         }
