@@ -168,8 +168,8 @@ export function PersonnelSearch({
         <PopoverContent className="w-80 bg-card border-primary/30" align="end">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
+              <h3 className="font-bold uppercase tracking-wide text-sm">Filters</h3>
               <div className="flex items-center gap-3">
-                <h3 className="font-bold uppercase tracking-wide text-sm">Filters</h3>
                 <div className="flex items-center gap-1.5">
                   <Checkbox
                     id="show-inactive"
@@ -181,18 +181,18 @@ export function PersonnelSearch({
                     Show Inactive
                   </Label>
                 </div>
+                {hasActiveFilters && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearAllFilters}
+                    className="h-auto p-1 hover:bg-primary/10 text-muted-foreground hover:text-foreground"
+                  >
+                    <X size={16} className="mr-1" />
+                    Clear
+                  </Button>
+                )}
               </div>
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearAllFilters}
-                  className="h-auto p-1 hover:bg-primary/10 text-muted-foreground hover:text-foreground"
-                >
-                  <X size={16} className="mr-1" />
-                  Clear
-                </Button>
-              )}
             </div>
 
             <div className="space-y-3">

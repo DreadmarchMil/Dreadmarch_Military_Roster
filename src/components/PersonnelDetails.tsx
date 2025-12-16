@@ -45,7 +45,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
           <div className="space-y-0.5">
             <div>
               <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                {personnel.rank || '—'}{personnel.grade ? ` ${personnel.grade}` : ''}
+                {personnel.rank || '—'}
               </div>
               <h2 className="text-xl font-bold text-foreground mb-1">{personnel.name}</h2>
               <div className="flex items-center gap-2">
@@ -112,9 +112,9 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
             <div className="grid gap-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Rank</div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Rank / Grade</div>
                   <div className="text-sm text-foreground">
-                    {personnel.rank || '—'}{personnel.grade ? ` ${personnel.grade}` : ''}
+                    {personnel.rank || '—'}{personnel.grade ? ` (${personnel.grade})` : ''}
                   </div>
                 </div>
 
