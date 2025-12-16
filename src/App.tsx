@@ -275,20 +275,25 @@ function App() {
       
       setPersonnelByUnit(current => {
         const allUnits = { ...(current || {}) }
-        let found = false
+        let oldUnitId: string | null = null
         
         for (const unitId in allUnits) {
           const unitPersonnel = allUnits[unitId]
           const index = unitPersonnel.findIndex(p => p.id === editingPersonnel.id)
           if (index !== -1) {
-            allUnits[unitId] = [
-              ...unitPersonnel.slice(0, index),
-              updatedPerson,
-              ...unitPersonnel.slice(index + 1)
-            ]
-            found = true
+            oldUnitId = unitId
+            allUnits[unitId] = unitPersonnel.filter(p => p.id !== editingPersonnel.id)
             break
           }
+        }
+        
+        const newUnitId = units?.find(u => u.name === data.assignedUnit)?.id
+        
+        if (newUnitId) {
+          if (!allUnits[newUnitId]) {
+            allUnits[newUnitId] = []
+          }
+          allUnits[newUnitId] = [...allUnits[newUnitId], updatedPerson]
         }
         
         return allUnits
