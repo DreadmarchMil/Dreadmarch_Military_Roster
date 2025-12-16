@@ -39,7 +39,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
         </SheetHeader>
 
         <div className="space-y-4 mt-1">
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             <div>
               <div className="text-lg font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">{personnel.rank || '—'}</div>
               <h2 className="text-2xl font-bold text-foreground mb-1.5">{personnel.name}</h2>
