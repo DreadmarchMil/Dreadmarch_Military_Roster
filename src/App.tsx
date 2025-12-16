@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Plus, UserGear, User } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,7 @@ import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
 import { DEFAULT_UNITS } from '@/lib/types'
 
 function App() {
-  const [units] = useKV<Unit[]>('military-units', DEFAULT_UNITS)
+  const [units, setUnits] = useKV<Unit[]>('military-units', DEFAULT_UNITS)
   const [currentUnitId, setCurrentUnitId] = useKV<string>('current-unit-id', DEFAULT_UNITS[0].id)
   const [personnelByUnit, setPersonnelByUnit] = useKV<Record<string, Personnel[]>>('personnel-by-unit', {})
   const [userRole, setUserRole] = useKV<UserRole>('user-role', 'player')
@@ -32,6 +32,12 @@ function App() {
     ranks: [],
     specialties: [],
   })
+
+  useEffect(() => {
+    if (units && units.length < DEFAULT_UNITS.length) {
+      setUnits(DEFAULT_UNITS)
+    }
+  }, [units, setUnits])
 
   const isGM = userRole === 'gm'
   const currentUnit = units?.find(u => u.id === currentUnitId) || DEFAULT_UNITS[0]
