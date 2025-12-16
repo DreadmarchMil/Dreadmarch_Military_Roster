@@ -6,8 +6,7 @@ export interface Personnel {
   role: string
   specialty: string
   species: string
-  primaryUnit: string
-  detachment: string
+  assignedUnit: string
   status: 'available' | 'deployed' | 'inactive' | 'wia' | 'kia'
   notes: string
 }

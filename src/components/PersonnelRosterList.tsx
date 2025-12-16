@@ -21,7 +21,7 @@ export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterLi
         <div className="col-span-12 sm:col-span-3">Name</div>
         <div className="hidden sm:block sm:col-span-2">Callsign</div>
         <div className="hidden md:block md:col-span-2">Rank</div>
-        <div className="hidden lg:block lg:col-span-2">Primary Unit</div>
+        <div className="hidden lg:block lg:col-span-2">Assigned Unit</div>
         <div className="hidden lg:block lg:col-span-2">Specialty</div>
         <div className="hidden sm:block sm:col-span-1">Status</div>
       </div>
@@ -43,7 +43,7 @@ export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterLi
               {person.rank || '—'}
             </div>
             <div className="hidden lg:block lg:col-span-2 text-sm text-foreground">
-              {person.primaryUnit || '—'}
+              {person.assignedUnit || '—'}
             </div>
             <div className="hidden lg:block lg:col-span-2 text-sm text-foreground">
               {person.specialty || '—'}

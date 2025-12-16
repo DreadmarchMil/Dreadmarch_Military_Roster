@@ -78,16 +78,9 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                 <div className="text-sm text-foreground">{personnel.species || '—'}</div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Primary Unit</div>
-                  <div className="text-sm text-foreground">{personnel.primaryUnit || '—'}</div>
-                </div>
-
-                <div>
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Detachment</div>
-                  <div className="text-sm text-foreground">{personnel.detachment || '—'}</div>
-                </div>
+              <div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Assigned Unit</div>
+                <div className="text-sm text-foreground">{personnel.assignedUnit || '—'}</div>
               </div>
 
               {personnel.notes && (

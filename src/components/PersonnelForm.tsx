@@ -24,8 +24,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
     role: '',
     specialty: '',
     species: '',
-    primaryUnit: '',
-    detachment: '',
+    assignedUnit: '',
     status: 'available',
     notes: ''
   })
@@ -39,8 +38,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         role: personnel.role,
         specialty: personnel.specialty,
         species: personnel.species,
-        primaryUnit: personnel.primaryUnit,
-        detachment: personnel.detachment,
+        assignedUnit: personnel.assignedUnit,
         status: personnel.status,
         notes: personnel.notes
       })
@@ -52,8 +50,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         role: '',
         specialty: '',
         species: '',
-        primaryUnit: '',
-        detachment: '',
+        assignedUnit: '',
         status: 'available',
         notes: ''
       })
@@ -176,39 +173,25 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="primaryUnit" className="text-xs uppercase tracking-wide text-muted-foreground">
-                Primary Unit
-              </Label>
-              <Select
-                value={formData.primaryUnit}
-                onValueChange={(value) => setFormData({ ...formData, primaryUnit: value })}
-              >
-                <SelectTrigger id="primaryUnit" className="bg-background border-input">
-                  <SelectValue placeholder="Select unit" />
-                </SelectTrigger>
-                <SelectContent className="bg-popover border-border">
-                  {sortUnits(units || []).map((unit) => (
-                    <SelectItem key={unit.id} value={unit.name}>
-                      {unit.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="detachment" className="text-xs uppercase tracking-wide text-muted-foreground">
-                Detachment
-              </Label>
-              <Input
-                id="detachment"
-                value={formData.detachment}
-                onChange={(e) => setFormData({ ...formData, detachment: e.target.value })}
-                className="bg-background border-input focus:border-ring focus:ring-ring"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="assignedUnit" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Assigned Unit
+            </Label>
+            <Select
+              value={formData.assignedUnit}
+              onValueChange={(value) => setFormData({ ...formData, assignedUnit: value })}
+            >
+              <SelectTrigger id="assignedUnit" className="bg-background border-input">
+                <SelectValue placeholder="Select unit" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border-border">
+                {sortUnits(units || []).map((unit) => (
+                  <SelectItem key={unit.id} value={unit.name}>
+                    {unit.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
