@@ -49,14 +49,16 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
             <Separator className="bg-border/50" />
 
             <div className="grid gap-4">
-              <div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Callsign</div>
-                <div className="text-sm text-foreground">{personnel.callsign || '—'}</div>
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Rank</div>
+                  <div className="text-sm text-foreground">{personnel.rank || '—'}</div>
+                </div>
 
-              <div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Rank</div>
-                <div className="text-sm text-foreground">{personnel.rank || '—'}</div>
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Callsign</div>
+                  <div className="text-sm text-foreground">{personnel.callsign || '—'}</div>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
