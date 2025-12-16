@@ -33,7 +33,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
       <SheetContent className="bg-card border-l-2 border-primary/30 w-full sm:max-w-lg overflow-y-auto p-6">
         <SheetHeader>
           <SheetTitle className="text-base font-bold uppercase tracking-wider text-primary">
-            PERSONNEL FILE
+            Imperial Military Personnel File
           </SheetTitle>
           <div className="h-[2px] mt-1 bg-gradient-to-r from-primary/20 via-accent to-primary/20 bg-[length:200%_100%] animate-[gradient_3s_ease-in-out_infinite]" />
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-semibold pt-1">
@@ -41,7 +41,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
           </div>
         </SheetHeader>
 
-        <div className="space-y-4 mt-2">
+        <div className="space-y-4 mt-1">
           <div className="space-y-0.5">
             <div>
               <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">{personnel.rank || '—'}</div>
