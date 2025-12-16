@@ -91,7 +91,7 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
                   </SelectContent>
                 </Select>
               ) : (
-                <Badge className={`text-[0.65rem] uppercase tracking-wider border ${statusColors[person.status]}`}>
+                <Badge className={`h-6 flex items-center text-[0.65rem] uppercase tracking-wider border ${statusColors[person.status]}`}>
                   {person.status}
                 </Badge>
               )}

@@ -48,7 +48,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     value={personnel.status} 
                     onValueChange={(value) => onStatusChange(personnel.id, value as Personnel['status'])}
                   >
-                    <SelectTrigger className={`h-7 w-auto text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2`}>
+                    <SelectTrigger className={`h-6 w-auto text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -60,7 +60,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     </SelectContent>
                   </Select>
                 ) : (
-                  <Badge className={`h-7 flex items-center text-xs uppercase tracking-wider border ${statusColors[personnel.status]}`}>
+                  <Badge className={`h-6 flex items-center text-xs uppercase tracking-wider border ${statusColors[personnel.status]}`}>
                     {personnel.status}
                   </Badge>
                 )}
@@ -72,7 +72,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                       const newType = personnel.characterType === 'pc' ? 'npc' : 'pc'
                       onToggleCharacterType(personnel.id, newType)
                     }}
-                    className={`h-7 px-2 text-xs uppercase tracking-wider border transition-colors ${
+                    className={`h-6 px-2 text-xs uppercase tracking-wider border transition-colors ${
                       personnel.characterType === 'pc' 
                         ? 'bg-primary/20 text-primary border-primary/50 hover:bg-primary/30' 
                         : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
@@ -91,7 +91,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     )}
                   </Button>
                 ) : (
-                  <Badge className={`h-7 flex items-center text-xs uppercase tracking-wider border ${
+                  <Badge className={`h-6 flex items-center text-xs uppercase tracking-wider border ${
                     personnel.characterType === 'pc' 
                       ? 'bg-primary/20 text-primary border-primary/50' 
                       : 'bg-muted text-muted-foreground border-border'
