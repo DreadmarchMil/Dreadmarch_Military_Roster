@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from '@phosphor-icons/react'
 
 interface BootScreenProps {
   onComplete: () => void
@@ -8,6 +10,7 @@ interface BootScreenProps {
 export function BootScreen({ onComplete }: BootScreenProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [showCursor, setShowCursor] = useState(true)
+  const [bootComplete, setBootComplete] = useState(false)
 
   const bootSequence = [
     { text: 'DREADMARCH MILITARY NETWORK', delay: 400 },
@@ -29,14 +32,12 @@ export function BootScreen({ onComplete }: BootScreenProps) {
       if (currentStep < bootSequence.length - 1) {
         setCurrentStep(currentStep + 1)
       } else {
-        setTimeout(() => {
-          onComplete()
-        }, bootSequence[currentStep].delay)
+        setBootComplete(true)
       }
     }, bootSequence[currentStep].delay)
 
     return () => clearTimeout(timer)
-  }, [currentStep, onComplete])
+  }, [currentStep])
 
   useEffect(() => {
     const cursorInterval = setInterval(() => {
@@ -78,7 +79,7 @@ export function BootScreen({ onComplete }: BootScreenProps) {
                 }`}
               >
                 {step.text}
-                {index === currentStep && step.text && showCursor && (
+                {index === currentStep && step.text && showCursor && !bootComplete && (
                   <span className="inline-block w-2 h-4 bg-accent ml-1 animate-pulse" />
                 )}
               </motion.div>
@@ -100,6 +101,23 @@ export function BootScreen({ onComplete }: BootScreenProps) {
               transition={{ duration: 0.3 }}
             />
           </motion.div>
+
+          {bootComplete && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="flex justify-center mt-12"
+            >
+              <Button
+                onClick={onComplete}
+                className="bg-primary hover:bg-accent text-primary-foreground font-bold uppercase tracking-wider px-8 py-6 text-base"
+              >
+                Enter Database
+                <ArrowRight size={20} className="ml-2" />
+              </Button>
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </AnimatePresence>
