@@ -48,7 +48,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     value={personnel.status} 
                     onValueChange={(value) => onStatusChange(personnel.id, value as Personnel['status'])}
                   >
-                    <SelectTrigger className={`h-6 w-[110px] text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2`}>
+                    <SelectTrigger className={`h-6 w-[110px] text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2 [&_svg]:hidden`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
