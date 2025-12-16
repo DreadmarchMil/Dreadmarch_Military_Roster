@@ -35,7 +35,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
           <SheetTitle className="text-base font-bold uppercase tracking-wider text-primary">
             PERSONNEL FILE
           </SheetTitle>
-          <div className="h-px bg-primary/30 mt-1" />
+          <div className="h-[2px] mt-1 bg-gradient-to-r from-primary/20 via-accent to-primary/20 bg-[length:200%_100%] animate-[gradient_3s_ease-in-out_infinite]" />
         </SheetHeader>
 
         <div className="space-y-4 mt-2">
