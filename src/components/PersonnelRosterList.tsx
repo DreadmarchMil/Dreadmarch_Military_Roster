@@ -1,12 +1,15 @@
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { Personnel } from '@/lib/types'
 
 interface PersonnelRosterListProps {
   personnel: Personnel[]
   onRowClick: (personnel: Personnel) => void
+  onStatusChange?: (id: string, status: Personnel['status']) => void
+  isGM?: boolean
 }
 
-export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterListProps) {
+export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isGM }: PersonnelRosterListProps) {
   const statusColors = {
     available: 'bg-accent/20 text-accent border-accent/30',
     deployed: 'bg-primary/20 text-primary border-primary/30',
@@ -16,46 +19,81 @@ export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterLi
   }
 
   return (
-    <div className="border border-border bg-card">
-      <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-primary/10 border-b-2 border-primary/30 text-xs font-bold uppercase tracking-wider text-primary">
-        <div className="col-span-12 sm:col-span-3">Name</div>
-        <div className="hidden sm:block sm:col-span-2">Callsign</div>
-        <div className="hidden md:block md:col-span-2">Rank</div>
-        <div className="hidden lg:block lg:col-span-2">Assigned Unit</div>
-        <div className="hidden xl:block xl:col-span-1">Specialty</div>
-        <div className="hidden sm:block sm:col-span-1">Status</div>
-        <div className="hidden sm:block sm:col-span-1">Type</div>
+    <div className="border border-border bg-card text-sm">
+      <div className="grid grid-cols-[2.5fr_1.5fr_1.5fr_2fr_1.5fr_1.2fr_0.8fr] gap-3 px-6 py-3 bg-primary/10 border-b-2 border-primary/30 text-xs font-bold uppercase tracking-wider text-primary">
+        <div>Name</div>
+        <div>Callsign</div>
+        <div>Rank</div>
+        <div>Assigned Unit</div>
+        <div>Specialty</div>
+        <div>Status</div>
+        <div className="text-right pr-2">Type</div>
       </div>
 
       <div className="divide-y divide-border/50">
         {personnel.map((person) => (
           <div
             key={person.id}
-            onClick={() => onRowClick(person)}
-            className="grid grid-cols-12 gap-4 px-6 py-4 cursor-pointer hover:bg-primary/5 transition-colors group"
+            className="grid grid-cols-[2.5fr_1.5fr_1.5fr_2fr_1.5fr_1.2fr_0.8fr] gap-3 px-6 py-3 hover:bg-primary/5 transition-colors group items-center"
           >
-            <div className="col-span-12 sm:col-span-3 font-semibold text-foreground group-hover:text-primary transition-colors">
+            <div 
+              className="font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
               {person.name}
             </div>
-            <div className="hidden sm:block sm:col-span-2 text-sm text-accent">
+            <div 
+              className="text-accent cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
               {person.callsign || '—'}
             </div>
-            <div className="hidden md:block md:col-span-2 text-sm text-muted-foreground uppercase tracking-wide">
+            <div 
+              className="text-muted-foreground uppercase tracking-wide cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
               {person.rank || '—'}
             </div>
-            <div className="hidden lg:block lg:col-span-2 text-sm text-foreground">
+            <div 
+              className="text-foreground cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
               {person.assignedUnit || '—'}
             </div>
-            <div className="hidden xl:block xl:col-span-1 text-sm text-foreground">
+            <div 
+              className="text-foreground cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
               {person.specialty || '—'}
             </div>
-            <div className="hidden sm:flex sm:col-span-1 items-center">
-              <Badge className={`text-xs uppercase tracking-wider border ${statusColors[person.status]}`}>
-                {person.status}
-              </Badge>
+            <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+              {isGM && onStatusChange ? (
+                <Select 
+                  value={person.status} 
+                  onValueChange={(value) => onStatusChange(person.id, value as Personnel['status'])}
+                >
+                  <SelectTrigger className={`h-7 text-xs uppercase tracking-wider border ${statusColors[person.status]} px-2 py-0`}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="available">Available</SelectItem>
+                    <SelectItem value="deployed">Deployed</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="wia">WIA</SelectItem>
+                    <SelectItem value="kia">KIA</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Badge className={`text-xs uppercase tracking-wider border ${statusColors[person.status]}`}>
+                  {person.status}
+                </Badge>
+              )}
             </div>
-            <div className="hidden sm:flex sm:col-span-1 items-center">
-              <Badge className={`text-xs uppercase tracking-wider border ${
+            <div 
+              className="flex items-center justify-end pr-2 cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
+              <Badge className={`text-xs uppercase tracking-wider border h-7 flex items-center ${
                 person.characterType === 'pc' 
                   ? 'bg-primary/20 text-primary border-primary/50' 
                   : 'bg-muted text-muted-foreground border-border'

@@ -1,6 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Pencil, Trash, User, Robot } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import type { Personnel } from '@/lib/types'
@@ -12,10 +13,11 @@ interface PersonnelDetailsProps {
   onEdit: (personnel: Personnel) => void
   onDelete: (id: string) => void
   onToggleCharacterType: (id: string, newType: 'pc' | 'npc') => void
+  onStatusChange?: (id: string, status: Personnel['status']) => void
   isGM: boolean
 }
 
-export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDelete, onToggleCharacterType, isGM }: PersonnelDetailsProps) {
+export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDelete, onToggleCharacterType, onStatusChange, isGM }: PersonnelDetailsProps) {
   if (!personnel) return null
 
   const statusColors = {
@@ -41,9 +43,27 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">{personnel.name}</h2>
               <div className="flex items-center gap-2">
-                <Badge className={`text-xs uppercase tracking-wider border ${statusColors[personnel.status]}`}>
-                  {personnel.status}
-                </Badge>
+                {isGM && onStatusChange ? (
+                  <Select 
+                    value={personnel.status} 
+                    onValueChange={(value) => onStatusChange(personnel.id, value as Personnel['status'])}
+                  >
+                    <SelectTrigger className={`h-7 w-auto text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="available">Available</SelectItem>
+                      <SelectItem value="deployed">Deployed</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="wia">WIA</SelectItem>
+                      <SelectItem value="kia">KIA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Badge className={`h-7 flex items-center text-xs uppercase tracking-wider border ${statusColors[personnel.status]}`}>
+                    {personnel.status}
+                  </Badge>
+                )}
                 {isGM ? (
                   <Button
                     variant="ghost"
@@ -71,7 +91,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     )}
                   </Button>
                 ) : (
-                  <Badge className={`text-xs uppercase tracking-wider border ${
+                  <Badge className={`h-7 flex items-center text-xs uppercase tracking-wider border ${
                     personnel.characterType === 'pc' 
                       ? 'bg-primary/20 text-primary border-primary/50' 
                       : 'bg-muted text-muted-foreground border-border'

@@ -295,6 +295,32 @@ function App() {
     })
   }
 
+  const handleStatusChange = (id: string, newStatus: Personnel['status']) => {
+    setPersonnelByUnit(current => {
+      const allUnits = { ...(current || {}) }
+      
+      for (const unitId in allUnits) {
+        const unitPersonnel = allUnits[unitId]
+        const index = unitPersonnel.findIndex(p => p.id === id)
+        if (index !== -1) {
+          const person = unitPersonnel[index]
+          allUnits[unitId] = [
+            ...unitPersonnel.slice(0, index),
+            { ...person, status: newStatus },
+            ...unitPersonnel.slice(index + 1)
+          ]
+          break
+        }
+      }
+      
+      return allUnits
+    })
+    
+    toast.success('Status updated', {
+      description: `Changed to ${newStatus.toUpperCase()}`
+    })
+  }
+
   const handleImport = (data: ExportData) => {
     setPersonnelByUnit(data.personnelByUnit)
     setUnits(data.units)
@@ -416,6 +442,8 @@ function App() {
               <PersonnelRosterList 
                 personnel={filteredPersonnel} 
                 onRowClick={handleCardClick}
+                onStatusChange={handleStatusChange}
+                isGM={isGM}
               />
             )}
           </div>
@@ -437,6 +465,7 @@ function App() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onToggleCharacterType={handleToggleCharacterType}
+        onStatusChange={handleStatusChange}
         isGM={isGM}
       />
 
