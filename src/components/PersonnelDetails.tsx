@@ -36,6 +36,9 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
             PERSONNEL FILE
           </SheetTitle>
           <div className="h-[2px] mt-1 bg-gradient-to-r from-primary/20 via-accent to-primary/20 bg-[length:200%_100%] animate-[gradient_3s_ease-in-out_infinite]" />
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-semibold pt-1">
+            Classified // Eyes Only // Security Clearance Required
+          </div>
         </SheetHeader>
 
         <div className="space-y-4 mt-2">
