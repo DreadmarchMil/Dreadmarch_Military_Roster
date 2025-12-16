@@ -234,14 +234,14 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
                 Secondment
               </Label>
               <Select
-                value={formData.secondment}
-                onValueChange={(value) => setFormData({ ...formData, secondment: value })}
+                value={formData.secondment || "none"}
+                onValueChange={(value) => setFormData({ ...formData, secondment: value === "none" ? "" : value })}
               >
                 <SelectTrigger id="secondment" className="bg-background border-input">
                   <SelectValue placeholder="None" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border">
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {sortUnits(childUnits).map((unit) => (
                     <SelectItem key={unit.id} value={unit.name}>
                       {unit.name}
