@@ -79,7 +79,7 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
                   value={person.status} 
                   onValueChange={(value) => onStatusChange(person.id, value as Personnel['status'])}
                 >
-                  <SelectTrigger className={`h-6 w-[85px] text-[0.65rem] uppercase tracking-wider border ${statusColors[person.status]} px-1.5 py-0`}>
+                  <SelectTrigger className={`h-6 w-[85px] text-[0.65rem] uppercase tracking-wider border ${statusColors[person.status]} px-1.5 py-0 flex items-center justify-center`}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -100,7 +100,7 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
               className="flex items-center justify-end pr-2 cursor-pointer"
               onClick={() => onRowClick(person)}
             >
-              <Badge className={`text-[0.65rem] uppercase tracking-wider border h-6 flex items-center ${
+              <Badge className={`w-[50px] text-[0.65rem] uppercase tracking-wider border h-6 flex items-center justify-center ${
                 person.characterType === 'pc' 
                   ? 'bg-primary/20 text-primary border-primary/50' 
                   : 'bg-muted text-muted-foreground border-border'
