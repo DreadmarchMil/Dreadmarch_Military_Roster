@@ -8,6 +8,7 @@ import { PersonnelForm } from '@/components/PersonnelForm'
 import { PersonnelDetails } from '@/components/PersonnelDetails'
 import { DeleteConfirmation } from '@/components/DeleteConfirmation'
 import { EmptyState } from '@/components/EmptyState'
+import { PasskeyDialog } from '@/components/PasskeyDialog'
 import type { Personnel, PersonnelFormData, UserRole } from '@/lib/types'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
   const [formOpen, setFormOpen] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [passkeyDialogOpen, setPasskeyDialogOpen] = useState(false)
   const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel | null>(null)
   const [editingPersonnel, setEditingPersonnel] = useState<Personnel | undefined>(undefined)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -23,9 +25,20 @@ function App() {
   const isGM = userRole === 'gm'
 
   const toggleRole = () => {
-    setUserRole(currentRole => currentRole === 'gm' ? 'player' : 'gm')
-    toast.success(`Switched to ${userRole === 'gm' ? 'Player' : 'GM'} mode`, {
-      description: userRole === 'gm' ? 'View-only access' : 'Full editing access'
+    if (isGM) {
+      setUserRole('player')
+      toast.success('Switched to Player mode', {
+        description: 'View-only access'
+      })
+    } else {
+      setPasskeyDialogOpen(true)
+    }
+  }
+
+  const handlePasskeySuccess = () => {
+    setUserRole('gm')
+    toast.success('Switched to GM mode', {
+      description: 'Full editing access'
     })
   }
 
@@ -191,6 +204,12 @@ function App() {
         onOpenChange={setDeleteDialogOpen}
         onConfirm={confirmDelete}
         personnelName={deletingPersonnel?.name || ''}
+      />
+
+      <PasskeyDialog
+        open={passkeyDialogOpen}
+        onOpenChange={setPasskeyDialogOpen}
+        onSuccess={handlePasskeySuccess}
       />
     </div>
   )
