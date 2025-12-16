@@ -12,12 +12,14 @@ import { PasskeyDialog } from '@/components/PasskeyDialog'
 import { UnitSwitcher } from '@/components/UnitSwitcher'
 import { PersonnelSearch, type SearchFilters } from '@/components/PersonnelSearch'
 import { ImportExportDialog } from '@/components/ImportExportDialog'
+import { BootScreen } from '@/components/BootScreen'
 import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
 import { DEFAULT_UNITS } from '@/lib/types'
 import type { ExportData } from '@/lib/import-export'
 import { sortPersonnelByRank } from '@/lib/utils'
 
 function App() {
+  const [bootComplete, setBootComplete] = useKV<boolean>('boot-complete', false)
   const [units, setUnits] = useKV<Unit[]>('military-units', DEFAULT_UNITS)
   const [currentUnitId, setCurrentUnitId] = useKV<string>('current-unit-id', DEFAULT_UNITS[0].id)
   const [personnelByUnit, setPersonnelByUnit] = useKV<Record<string, Personnel[]>>('personnel-by-unit', {})
@@ -399,6 +401,10 @@ function App() {
   }
 
   const deletingPersonnel = allPersonnel?.find(p => p.id === deletingId)
+
+  if (!bootComplete) {
+    return <BootScreen onComplete={() => setBootComplete(true)} />
+  }
 
   return (
     <div className="min-h-screen bg-background">

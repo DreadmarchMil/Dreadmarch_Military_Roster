@@ -15,8 +15,8 @@ interface PersonnelRosterListProps {
 }
 
 export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isGM }: PersonnelRosterListProps) {
-  const [sortField, setSortField] = useState<SortField | null>(null)
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const [sortField, setSortField] = useState<SortField | null>('rank')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
   const statusColors = {
     available: 'bg-accent/20 text-accent border-accent/30',
