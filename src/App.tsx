@@ -130,7 +130,7 @@ function App() {
     if (isNaN(gradeNum)) return null
     if (gradeNum >= 1 && gradeNum <= 3) return 'junior-enlisted'
     if (gradeNum >= 4 && gradeNum <= 8) return 'nco'
-    if (gradeNum >= 9) return 'officer'
+    if (gradeNum >= 9 && gradeNum <= 16) return 'officer'
     return null
   }
 

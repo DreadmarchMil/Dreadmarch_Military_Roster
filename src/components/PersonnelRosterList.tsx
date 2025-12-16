@@ -1,6 +1,11 @@
+import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { CaretUp, CaretDown } from '@phosphor-icons/react'
 import type { Personnel } from '@/lib/types'
+
+type SortField = 'name' | 'callsign' | 'rank' | 'assignedUnit' | 'secondment' | 'specialty' | 'status' | 'characterType'
+type SortDirection = 'asc' | 'desc'
 
 interface PersonnelRosterListProps {
   personnel: Personnel[]
@@ -10,6 +15,9 @@ interface PersonnelRosterListProps {
 }
 
 export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isGM }: PersonnelRosterListProps) {
+  const [sortField, setSortField] = useState<SortField | null>(null)
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+
   const statusColors = {
     available: 'bg-accent/20 text-accent border-accent/30',
     deployed: 'bg-primary/20 text-primary border-primary/30',
@@ -18,21 +26,113 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
     kia: 'bg-destructive/20 text-destructive border-destructive/30'
   }
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const sortedPersonnel = [...personnel].sort((a, b) => {
+    if (!sortField) return 0
+
+    let compareResult = 0
+    let aValue: string | number = ''
+    let bValue: string | number = ''
+
+    switch (sortField) {
+      case 'name':
+        aValue = a.name.toLowerCase()
+        bValue = b.name.toLowerCase()
+        break
+      case 'callsign':
+        aValue = a.callsign.toLowerCase()
+        bValue = b.callsign.toLowerCase()
+        break
+      case 'rank':
+        aValue = a.rank.toLowerCase()
+        bValue = b.rank.toLowerCase()
+        break
+      case 'assignedUnit':
+        aValue = a.assignedUnit.toLowerCase()
+        bValue = b.assignedUnit.toLowerCase()
+        break
+      case 'secondment':
+        aValue = (a.secondment || '').toLowerCase()
+        bValue = (b.secondment || '').toLowerCase()
+        break
+      case 'specialty':
+        aValue = a.specialty.toLowerCase()
+        bValue = b.specialty.toLowerCase()
+        break
+      case 'status':
+        aValue = a.status
+        bValue = b.status
+        break
+      case 'characterType':
+        aValue = a.characterType
+        bValue = b.characterType
+        break
+    }
+
+    if (aValue < bValue) compareResult = -1
+    else if (aValue > bValue) compareResult = 1
+    else compareResult = 0
+
+    if (compareResult === 0) {
+      const gradeA = parseInt(a.grade) || 0
+      const gradeB = parseInt(b.grade) || 0
+      if (gradeA !== gradeB) {
+        return gradeB - gradeA
+      }
+      return a.name.localeCompare(b.name)
+    }
+
+    return sortDirection === 'asc' ? compareResult : -compareResult
+  })
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) return null
+    return sortDirection === 'asc' ? (
+      <CaretUp size={12} className="inline ml-1" weight="bold" />
+    ) : (
+      <CaretDown size={12} className="inline ml-1" weight="bold" />
+    )
+  }
+
   return (
     <div className="border border-border bg-card text-xs">
       <div className="grid grid-cols-[2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 bg-primary/10 border-b-2 border-primary/30 text-[0.65rem] font-bold uppercase tracking-wider text-primary">
-        <div>Name</div>
-        <div>Callsign</div>
-        <div>Rank</div>
-        <div>Assigned Unit</div>
-        <div>Secondment</div>
-        <div>Specialty</div>
-        <div>Status</div>
-        <div className="text-right pr-2">Type</div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('name')}>
+          Name<SortIcon field="name" />
+        </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('callsign')}>
+          Callsign<SortIcon field="callsign" />
+        </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('rank')}>
+          Rank<SortIcon field="rank" />
+        </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('assignedUnit')}>
+          Assigned Unit<SortIcon field="assignedUnit" />
+        </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('secondment')}>
+          Secondment<SortIcon field="secondment" />
+        </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('specialty')}>
+          Specialty<SortIcon field="specialty" />
+        </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('status')}>
+          Status<SortIcon field="status" />
+        </div>
+        <div className="text-right pr-2 cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('characterType')}>
+          Type<SortIcon field="characterType" />
+        </div>
       </div>
 
       <div className="divide-y divide-border/50">
-        {personnel.map((person) => (
+        {sortedPersonnel.map((person) => (
           <div
             key={person.id}
             className="grid grid-cols-[2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 hover:bg-primary/5 transition-colors group items-center"

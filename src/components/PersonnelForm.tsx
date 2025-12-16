@@ -160,6 +160,8 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
               <Input
                 id="grade"
                 type="number"
+                min="1"
+                max="16"
                 value={formData.grade}
                 onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
                 className="bg-background border-input focus:border-ring focus:ring-ring"
