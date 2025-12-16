@@ -12,6 +12,13 @@ This is a CRUD application focused on managing a roster list with form-based edi
 
 ## Essential Features
 
+**Access Control (Player vs GM Mode)**
+- Functionality: Toggle between Player (read-only) and GM (full editing) access levels
+- Purpose: Allow GMs to manage the roster while giving players view-only access to personnel data
+- Trigger: User clicks the role toggle button in the header
+- Progression: Click role button → Mode switches → UI updates to show/hide editing controls → Toast confirms mode change
+- Success criteria: Players cannot add/edit/delete personnel; GMs have full CRUD access; mode persists between sessions
+
 **View Roster List**
 - Functionality: Display all characters/NPCs in a scannable list format with key information visible
 - Purpose: Provides quick overview of all personnel in the unit
@@ -20,25 +27,25 @@ This is a CRUD application focused on managing a roster list with form-based edi
 - Success criteria: All saved characters display with name, rank, and role clearly visible
 
 **Add New Personnel**
-- Functionality: Create new character/NPC entry with essential fields
+- Functionality: Create new character/NPC entry with essential fields (GM only)
 - Purpose: Expand the roster with new personnel records
-- Trigger: User clicks "Add Personnel" button
+- Trigger: GM clicks "Add Personnel" button
 - Progression: Click add button → Form dialog opens → Fill fields → Save → New entry appears in roster
-- Success criteria: New personnel entry persists and displays correctly in the roster list
+- Success criteria: New personnel entry persists and displays correctly in the roster list; button hidden for players
 
 **Edit Personnel**
-- Functionality: Modify existing character/NPC information
+- Functionality: Modify existing character/NPC information (GM only)
 - Purpose: Keep roster records current as characters develop or details change
-- Trigger: User clicks edit action on a roster entry
+- Trigger: GM clicks edit action on a roster entry or in details view
 - Progression: Click edit → Form pre-fills with existing data → Modify fields → Save → Updated entry reflects changes
-- Success criteria: Changes persist and display immediately in the roster
+- Success criteria: Changes persist and display immediately in the roster; edit buttons hidden for players
 
 **Delete Personnel**
-- Functionality: Remove character/NPC from roster
+- Functionality: Remove character/NPC from roster (GM only)
 - Purpose: Clean up retired characters or incorrect entries
-- Trigger: User clicks delete action on a roster entry
+- Trigger: GM clicks delete action on a roster entry or in details view
 - Progression: Click delete → Confirmation prompt → Confirm → Entry removed from roster
-- Success criteria: Deleted entry no longer appears and does not return on refresh
+- Success criteria: Deleted entry no longer appears and does not return on refresh; delete buttons hidden for players
 
 **Personnel Details View**
 - Functionality: Expand entry to see full character information
@@ -49,7 +56,8 @@ This is a CRUD application focused on managing a roster list with form-based edi
 
 ## Edge Case Handling
 
-- **Empty Roster State**: Display an Imperial-themed empty state message encouraging the user to add their first personnel record
+- **Empty Roster State**: Display an Imperial-themed empty state message with different text for players vs GMs; show "Initialize Personnel Record" button only for GMs
+- **Player Access Attempts**: Show error toasts when players attempt restricted actions (add/edit/delete)
 - **Long Names/Text**: Truncate with ellipsis in list view, show full text in detail/edit views
 - **Duplicate Names**: Allow duplicates (common in military settings) but ensure each has unique identifier
 - **Required Fields**: Prevent saving if essential fields (name) are empty with clear validation messaging
@@ -112,7 +120,8 @@ Animations should feel technical and precise, like interface elements snapping i
   - Plus (Add personnel)
   - Pencil or PencilSimple (Edit)
   - Trash (Delete)
-  - User or UserCircle (Personnel profile icon)
+  - User or UserCircle (Personnel profile icon, Player mode indicator)
+  - UserGear (GM mode indicator)
   - X (Close dialogs)
   - Check (Confirm actions)
   - Warning (Delete confirmation)

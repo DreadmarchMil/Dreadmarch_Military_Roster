@@ -11,9 +11,10 @@ interface PersonnelDetailsProps {
   onOpenChange: (open: boolean) => void
   onEdit: (personnel: Personnel) => void
   onDelete: (id: string) => void
+  isGM: boolean
 }
 
-export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDelete }: PersonnelDetailsProps) {
+export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDelete, isGM }: PersonnelDetailsProps) {
   if (!personnel) return null
 
   const statusColors = {
@@ -103,31 +104,35 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
             </div>
           </div>
 
-          <Separator className="bg-primary/20" />
+          {isGM && (
+            <>
+              <Separator className="bg-primary/20" />
 
-          <div className="flex gap-3">
-            <Button
-              onClick={() => {
-                onEdit(personnel)
-                onOpenChange(false)
-              }}
-              className="flex-1 bg-primary text-primary-foreground hover:bg-accent font-semibold uppercase tracking-wide"
-            >
-              <Pencil size={16} className="mr-2" />
-              Edit
-            </Button>
-            <Button
-              onClick={() => {
-                onDelete(personnel.id)
-                onOpenChange(false)
-              }}
-              variant="outline"
-              className="flex-1 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground font-semibold uppercase tracking-wide"
-            >
-              <Trash size={16} className="mr-2" />
-              Delete
-            </Button>
-          </div>
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => {
+                    onEdit(personnel)
+                    onOpenChange(false)
+                  }}
+                  className="flex-1 bg-primary text-primary-foreground hover:bg-accent font-semibold uppercase tracking-wide"
+                >
+                  <Pencil size={16} className="mr-2" />
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => {
+                    onDelete(personnel.id)
+                    onOpenChange(false)
+                  }}
+                  variant="outline"
+                  className="flex-1 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground font-semibold uppercase tracking-wide"
+                >
+                  <Trash size={16} className="mr-2" />
+                  Delete
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>

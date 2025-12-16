@@ -1,6 +1,6 @@
 import { UserCircle } from '@phosphor-icons/react'
 
-export function EmptyState({ onAddClick }: { onAddClick: () => void }) {
+export function EmptyState({ onAddClick, isGM }: { onAddClick: () => void; isGM: boolean }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
       <div className="relative mb-6">
@@ -11,14 +11,18 @@ export function EmptyState({ onAddClick }: { onAddClick: () => void }) {
         NO PERSONNEL RECORDS FOUND
       </h3>
       <p className="text-sm text-muted-foreground mb-6 text-center max-w-md">
-        Imperial database contains zero personnel entries. Initialize first record to begin roster management.
+        {isGM 
+          ? 'Imperial database contains zero personnel entries. Initialize first record to begin roster management.'
+          : 'Imperial database contains zero personnel entries. Contact your GM to add personnel records.'}
       </p>
-      <button
-        onClick={onAddClick}
-        className="px-6 py-3 bg-primary text-primary-foreground font-semibold uppercase tracking-wider text-sm hover:bg-accent transition-colors"
-      >
-        Initialize Personnel Record
-      </button>
+      {isGM && (
+        <button
+          onClick={onAddClick}
+          className="px-6 py-3 bg-primary text-primary-foreground font-semibold uppercase tracking-wider text-sm hover:bg-accent transition-colors"
+        >
+          Initialize Personnel Record
+        </button>
+      )}
     </div>
   )
 }

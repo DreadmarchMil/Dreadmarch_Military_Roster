@@ -8,10 +8,11 @@ interface PersonnelRosterListProps {
 
 export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterListProps) {
   const statusColors = {
-    active: 'bg-accent/20 text-accent border-accent/30',
+    available: 'bg-accent/20 text-accent border-accent/30',
+    deployed: 'bg-primary/20 text-primary border-primary/30',
     inactive: 'bg-muted text-muted-foreground border-muted',
-    kia: 'bg-destructive/20 text-destructive border-destructive/30',
-    mia: 'bg-secondary text-secondary-foreground border-secondary'
+    wia: 'bg-secondary text-secondary-foreground border-secondary',
+    kia: 'bg-destructive/20 text-destructive border-destructive/30'
   }
 
   return (

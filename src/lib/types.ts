@@ -13,3 +13,5 @@ export interface Personnel {
 }
 
 export type PersonnelFormData = Omit<Personnel, 'id'>
+
+export type UserRole = 'player' | 'gm'
