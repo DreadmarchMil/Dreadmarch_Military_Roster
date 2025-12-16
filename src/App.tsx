@@ -35,6 +35,8 @@ function App() {
     ranks: [],
     specialties: [],
     characterTypes: [],
+    assignedUnits: [],
+    secondments: [],
   })
 
   useEffect(() => {
@@ -148,6 +150,14 @@ function App() {
 
     if (filters.characterTypes.length > 0) {
       filtered = filtered.filter(p => filters.characterTypes.includes(p.characterType))
+    }
+
+    if (filters.assignedUnits.length > 0) {
+      filtered = filtered.filter(p => filters.assignedUnits.includes(p.assignedUnit))
+    }
+
+    if (filters.secondments.length > 0) {
+      filtered = filtered.filter(p => p.secondment && filters.secondments.includes(p.secondment))
     }
 
     return filtered
@@ -450,13 +460,14 @@ function App() {
               onFiltersChange={setFilters}
               availableRanks={availableRanks}
               availableSpecialties={availableSpecialties}
+              availableUnits={units || DEFAULT_UNITS}
             />
             {filteredPersonnel.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">No personnel match your search criteria</p>
                 <Button
                   variant="outline"
-                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [], characterTypes: [] })}
+                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [], characterTypes: [], assignedUnits: [], secondments: [] })}
                   className="mt-4 border-primary/30 hover:bg-primary/10"
                 >
                   Clear Filters
