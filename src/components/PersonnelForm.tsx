@@ -17,10 +17,13 @@ interface PersonnelFormProps {
 export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: PersonnelFormProps) {
   const [formData, setFormData] = useState<PersonnelFormData>({
     name: '',
+    callsign: '',
     rank: '',
     role: '',
+    specialty: '',
     species: '',
-    affiliation: '',
+    primaryUnit: '',
+    detachment: '',
     status: 'active',
     notes: ''
   })
@@ -29,20 +32,26 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
     if (personnel) {
       setFormData({
         name: personnel.name,
+        callsign: personnel.callsign,
         rank: personnel.rank,
         role: personnel.role,
+        specialty: personnel.specialty,
         species: personnel.species,
-        affiliation: personnel.affiliation,
+        primaryUnit: personnel.primaryUnit,
+        detachment: personnel.detachment,
         status: personnel.status,
         notes: personnel.notes
       })
     } else {
       setFormData({
         name: '',
+        callsign: '',
         rank: '',
         role: '',
+        specialty: '',
         species: '',
-        affiliation: '',
+        primaryUnit: '',
+        detachment: '',
         status: 'active',
         notes: ''
       })
@@ -82,6 +91,18 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
+              <Label htmlFor="callsign" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Callsign
+              </Label>
+              <Input
+                id="callsign"
+                value={formData.callsign}
+                onChange={(e) => setFormData({ ...formData, callsign: e.target.value })}
+                className="bg-background border-input focus:border-ring focus:ring-ring"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="rank" className="text-xs uppercase tracking-wide text-muted-foreground">
                 Rank
               </Label>
@@ -92,33 +113,33 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
                 className="bg-background border-input focus:border-ring focus:ring-ring"
               />
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="status" className="text-xs uppercase tracking-wide text-muted-foreground">
-                Status
-              </Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value: 'active' | 'inactive' | 'kia' | 'mia') =>
-                  setFormData({ ...formData, status: value })
-                }
-              >
-                <SelectTrigger id="status" className="bg-background border-input">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-popover border-border">
-                  <SelectItem value="active">ACTIVE</SelectItem>
-                  <SelectItem value="inactive">INACTIVE</SelectItem>
-                  <SelectItem value="kia">KIA</SelectItem>
-                  <SelectItem value="mia">MIA</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="status" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Status
+            </Label>
+            <Select
+              value={formData.status}
+              onValueChange={(value: 'active' | 'inactive' | 'kia' | 'mia') =>
+                setFormData({ ...formData, status: value })
+              }
+            >
+              <SelectTrigger id="status" className="bg-background border-input">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border-border">
+                <SelectItem value="active">ACTIVE</SelectItem>
+                <SelectItem value="inactive">INACTIVE</SelectItem>
+                <SelectItem value="kia">KIA</SelectItem>
+                <SelectItem value="mia">MIA</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="role" className="text-xs uppercase tracking-wide text-muted-foreground">
-              Role / Specialization
+              Role
             </Label>
             <Input
               id="role"
@@ -128,27 +149,51 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="specialty" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Specialty
+            </Label>
+            <Input
+              id="specialty"
+              value={formData.specialty}
+              onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
+              className="bg-background border-input focus:border-ring focus:ring-ring"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="species" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Species
+            </Label>
+            <Input
+              id="species"
+              value={formData.species}
+              onChange={(e) => setFormData({ ...formData, species: e.target.value })}
+              className="bg-background border-input focus:border-ring focus:ring-ring"
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="species" className="text-xs uppercase tracking-wide text-muted-foreground">
-                Species
+              <Label htmlFor="primaryUnit" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Primary Unit
               </Label>
               <Input
-                id="species"
-                value={formData.species}
-                onChange={(e) => setFormData({ ...formData, species: e.target.value })}
+                id="primaryUnit"
+                value={formData.primaryUnit}
+                onChange={(e) => setFormData({ ...formData, primaryUnit: e.target.value })}
                 className="bg-background border-input focus:border-ring focus:ring-ring"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="affiliation" className="text-xs uppercase tracking-wide text-muted-foreground">
-                Affiliation
+              <Label htmlFor="detachment" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Detachment
               </Label>
               <Input
-                id="affiliation"
-                value={formData.affiliation}
-                onChange={(e) => setFormData({ ...formData, affiliation: e.target.value })}
+                id="detachment"
+                value={formData.detachment}
+                onChange={(e) => setFormData({ ...formData, detachment: e.target.value })}
                 className="bg-background border-input focus:border-ring focus:ring-ring"
               />
             </div>

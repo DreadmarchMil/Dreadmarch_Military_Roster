@@ -48,24 +48,41 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
 
             <div className="grid gap-4">
               <div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Callsign</div>
+                <div className="text-sm text-foreground">{personnel.callsign || '—'}</div>
+              </div>
+
+              <div>
                 <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Rank</div>
                 <div className="text-sm text-foreground">{personnel.rank || '—'}</div>
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Role</div>
+                  <div className="text-sm text-foreground">{personnel.role || '—'}</div>
+                </div>
+
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Specialty</div>
+                  <div className="text-sm text-foreground">{personnel.specialty || '—'}</div>
+                </div>
+              </div>
+
               <div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Role / Specialization</div>
-                <div className="text-sm text-foreground">{personnel.role || '—'}</div>
+                <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Species</div>
+                <div className="text-sm text-foreground">{personnel.species || '—'}</div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Species</div>
-                  <div className="text-sm text-foreground">{personnel.species || '—'}</div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Primary Unit</div>
+                  <div className="text-sm text-foreground">{personnel.primaryUnit || '—'}</div>
                 </div>
 
                 <div>
-                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Affiliation</div>
-                  <div className="text-sm text-foreground">{personnel.affiliation || '—'}</div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Detachment</div>
+                  <div className="text-sm text-foreground">{personnel.detachment || '—'}</div>
                 </div>
               </div>
 
