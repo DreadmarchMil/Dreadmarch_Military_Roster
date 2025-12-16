@@ -38,7 +38,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
           <div className="h-px bg-primary/30 mt-2" />
         </SheetHeader>
 
-        <div className="space-y-6 mt-3">
+        <div className="space-y-6 mt-1">
           <div className="space-y-4">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-1.5">{personnel.name}</h2>
