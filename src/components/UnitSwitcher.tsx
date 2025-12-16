@@ -27,7 +27,7 @@ export function UnitSwitcher({ units, currentUnitId, onUnitChange }: UnitSwitche
 
   return (
     <Select value={currentUnitId} onValueChange={onUnitChange}>
-      <SelectTrigger className="w-[280px] border-primary/30 bg-card/80 font-semibold uppercase tracking-wide">
+      <SelectTrigger className="w-full max-w-lg border-primary/30 bg-card/80 font-semibold uppercase tracking-wide">
         <SelectValue placeholder="Select Unit">
           {currentUnit?.name}
         </SelectValue>

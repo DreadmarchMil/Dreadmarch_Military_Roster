@@ -172,15 +172,12 @@ function App() {
               <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wider text-primary">
                 Dreadmarch Military Personnel Database
               </h1>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="mt-2">
                 <UnitSwitcher 
                   units={units || DEFAULT_UNITS}
                   currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
                   onUnitChange={setCurrentUnitId}
                 />
-                <span className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide whitespace-nowrap">
-                  Personnel List — Classified Access
-                </span>
               </div>
             </div>
             <div className="flex items-center gap-3">
