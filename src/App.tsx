@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
-import { Plus, UserGear, User } from '@phosphor-icons/react'
+import { Plus, UserGear, User, Database } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Toaster, toast } from 'sonner'
 import { PersonnelRosterList } from '@/components/PersonnelRosterList'
@@ -11,8 +11,10 @@ import { EmptyState } from '@/components/EmptyState'
 import { PasskeyDialog } from '@/components/PasskeyDialog'
 import { UnitSwitcher } from '@/components/UnitSwitcher'
 import { PersonnelSearch, type SearchFilters } from '@/components/PersonnelSearch'
+import { ImportExportDialog } from '@/components/ImportExportDialog'
 import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
 import { DEFAULT_UNITS } from '@/lib/types'
+import type { ExportData } from '@/lib/import-export'
 
 function App() {
   const [units, setUnits] = useKV<Unit[]>('military-units', DEFAULT_UNITS)
@@ -23,6 +25,7 @@ function App() {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [passkeyDialogOpen, setPasskeyDialogOpen] = useState(false)
+  const [importExportOpen, setImportExportOpen] = useState(false)
   const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel | null>(null)
   const [editingPersonnel, setEditingPersonnel] = useState<Personnel | undefined>(undefined)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -238,6 +241,28 @@ function App() {
     setDetailsOpen(true)
   }
 
+  const handleImport = (data: ExportData) => {
+    setPersonnelByUnit(data.personnelByUnit)
+    setUnits(data.units)
+    
+    const newCurrentUnit = data.units.find(u => u.id === currentUnitId)
+    if (!newCurrentUnit && data.units.length > 0) {
+      setCurrentUnitId(data.units[0].id)
+    }
+    
+    toast.success('Data imported successfully', {
+      description: `Loaded ${Object.values(data.personnelByUnit).flat().length} personnel records`
+    })
+  }
+
+  const handleOpenImportExport = () => {
+    if (!isGM) {
+      toast.error('Access denied', { description: 'Only GMs can import/export data' })
+      return
+    }
+    setImportExportOpen(true)
+  }
+
   const deletingPersonnel = allPersonnel?.find(p => p.id === deletingId)
 
   return (
@@ -269,6 +294,14 @@ function App() {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <Button
+                onClick={handleOpenImportExport}
+                variant="outline"
+                className="border-primary/30 hover:bg-primary/10 font-semibold uppercase tracking-wide"
+              >
+                <Database size={20} className="mr-2" />
+                <span className="hidden sm:inline">Data</span>
+              </Button>
               <Button
                 onClick={toggleRole}
                 variant="outline"
@@ -363,6 +396,14 @@ function App() {
         open={passkeyDialogOpen}
         onOpenChange={setPasskeyDialogOpen}
         onSuccess={handlePasskeySuccess}
+      />
+
+      <ImportExportDialog
+        open={importExportOpen}
+        onOpenChange={setImportExportOpen}
+        personnelByUnit={personnelByUnit || {}}
+        units={units || DEFAULT_UNITS}
+        onImport={handleImport}
       />
     </div>
   )
