@@ -1,5 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { Unit } from '@/lib/types'
+import { sortUnits } from '@/lib/utils'
 
 interface UnitSwitcherProps {
   units: Unit[]
@@ -16,14 +17,7 @@ export function UnitSwitcher({ units, currentUnitId, onUnitChange }: UnitSwitche
     return 1 + getUnitDepth(unit.parentId)
   }
 
-  const sortedUnits = units ? [...units].sort((a, b) => {
-    const getPath = (unit: Unit): string => {
-      if (!unit.parentId) return unit.id
-      const parent = units.find(u => u.id === unit.parentId)
-      return parent ? `${getPath(parent)}/${unit.id}` : unit.id
-    }
-    return getPath(a).localeCompare(getPath(b))
-  }) : []
+  const sortedUnits = units ? sortUnits(units) : []
 
   return (
     <Select value={currentUnitId} onValueChange={onUnitChange}>

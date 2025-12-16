@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { Personnel, PersonnelFormData, Unit } from '@/lib/types'
+import { sortUnits } from '@/lib/utils'
 
 interface PersonnelFormProps {
   open: boolean
@@ -188,11 +189,11 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
                   <SelectValue placeholder="Select unit" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border">
-                  {units?.map((unit) => (
+                  {sortUnits(units || []).map((unit) => (
                     <SelectItem key={unit.id} value={unit.name}>
                       {unit.name}
                     </SelectItem>
-                  )) || []}
+                  ))}
                 </SelectContent>
               </Select>
             </div>
