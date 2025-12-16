@@ -303,6 +303,7 @@ function App() {
         onOpenChange={setFormOpen}
         onSubmit={handleSubmit}
         personnel={editingPersonnel}
+        units={units || DEFAULT_UNITS}
       />
 
       <PersonnelDetails

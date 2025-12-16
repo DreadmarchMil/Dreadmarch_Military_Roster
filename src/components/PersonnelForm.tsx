@@ -5,16 +5,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { Personnel, PersonnelFormData } from '@/lib/types'
+import type { Personnel, PersonnelFormData, Unit } from '@/lib/types'
 
 interface PersonnelFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSubmit: (data: PersonnelFormData) => void
   personnel?: Personnel
+  units: Unit[]
 }
 
-export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: PersonnelFormProps) {
+export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }: PersonnelFormProps) {
   const [formData, setFormData] = useState<PersonnelFormData>({
     name: '',
     callsign: '',
@@ -179,12 +180,21 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
               <Label htmlFor="primaryUnit" className="text-xs uppercase tracking-wide text-muted-foreground">
                 Primary Unit
               </Label>
-              <Input
-                id="primaryUnit"
+              <Select
                 value={formData.primaryUnit}
-                onChange={(e) => setFormData({ ...formData, primaryUnit: e.target.value })}
-                className="bg-background border-input focus:border-ring focus:ring-ring"
-              />
+                onValueChange={(value) => setFormData({ ...formData, primaryUnit: value })}
+              >
+                <SelectTrigger id="primaryUnit" className="bg-background border-input">
+                  <SelectValue placeholder="Select unit" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border">
+                  {units.map((unit) => (
+                    <SelectItem key={unit.id} value={unit.name}>
+                      {unit.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
