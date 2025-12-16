@@ -43,6 +43,13 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                 <Badge className={`text-xs uppercase tracking-wider border ${statusColors[personnel.status]}`}>
                   {personnel.status}
                 </Badge>
+                <Badge className={`text-xs uppercase tracking-wider border ${
+                  personnel.characterType === 'pc' 
+                    ? 'bg-primary/20 text-primary border-primary/50' 
+                    : 'bg-muted text-muted-foreground border-border'
+                }`}>
+                  {personnel.characterType === 'pc' ? 'PC' : 'NPC'}
+                </Badge>
               </div>
             </div>
 

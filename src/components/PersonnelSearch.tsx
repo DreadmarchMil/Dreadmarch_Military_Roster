@@ -15,6 +15,7 @@ export interface SearchFilters {
   statuses: string[]
   ranks: string[]
   specialties: string[]
+  characterTypes: string[]
 }
 
 interface PersonnelSearchProps {
@@ -40,6 +41,11 @@ export function PersonnelSearch({
     { value: 'kia', label: 'KIA' },
   ]
 
+  const characterTypeOptions = [
+    { value: 'pc', label: 'PC (Player Character)' },
+    { value: 'npc', label: 'NPC (Non-Player Character)' },
+  ]
+
   const handleSearchChange = (value: string) => {
     setLocalSearch(value)
     onFiltersChange({ ...filters, searchQuery: value })
@@ -50,6 +56,13 @@ export function PersonnelSearch({
       ? filters.statuses.filter(s => s !== status)
       : [...filters.statuses, status]
     onFiltersChange({ ...filters, statuses: newStatuses })
+  }
+
+  const handleCharacterTypeToggle = (type: string) => {
+    const newTypes = filters.characterTypes.includes(type)
+      ? filters.characterTypes.filter(t => t !== type)
+      : [...filters.characterTypes, type]
+    onFiltersChange({ ...filters, characterTypes: newTypes })
   }
 
   const handleRankToggle = (rank: string) => {
@@ -73,6 +86,7 @@ export function PersonnelSearch({
       statuses: [],
       ranks: [],
       specialties: [],
+      characterTypes: [],
     })
   }
 
@@ -80,12 +94,14 @@ export function PersonnelSearch({
     filters.searchQuery ||
     filters.statuses.length > 0 ||
     filters.ranks.length > 0 ||
-    filters.specialties.length > 0
+    filters.specialties.length > 0 ||
+    filters.characterTypes.length > 0
 
   const activeFilterCount =
     filters.statuses.length +
     filters.ranks.length +
     filters.specialties.length +
+    filters.characterTypes.length +
     (filters.searchQuery ? 1 : 0)
 
   return (
@@ -137,6 +153,29 @@ export function PersonnelSearch({
             </div>
 
             <div className="space-y-3">
+              <div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
+                  Character Type
+                </Label>
+                <div className="space-y-2">
+                  {characterTypeOptions.map((option) => (
+                    <div key={option.value} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`type-${option.value}`}
+                        checked={filters.characterTypes.includes(option.value)}
+                        onCheckedChange={() => handleCharacterTypeToggle(option.value)}
+                      />
+                      <label
+                        htmlFor={`type-${option.value}`}
+                        className="text-sm font-medium cursor-pointer"
+                      >
+                        {option.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div>
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
                   Status

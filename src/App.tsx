@@ -34,6 +34,7 @@ function App() {
     statuses: [],
     ranks: [],
     specialties: [],
+    characterTypes: [],
   })
 
   useEffect(() => {
@@ -41,6 +42,29 @@ function App() {
       setUnits(DEFAULT_UNITS)
     }
   }, [units, setUnits])
+
+  useEffect(() => {
+    if (personnelByUnit) {
+      let needsUpdate = false
+      const updated: Record<string, Personnel[]> = {}
+      
+      for (const unitId in personnelByUnit) {
+        const unitPersonnel = personnelByUnit[unitId]
+        const updatedPersonnel = unitPersonnel.map(person => {
+          if (!person.characterType) {
+            needsUpdate = true
+            return { ...person, characterType: 'pc' as const }
+          }
+          return person
+        })
+        updated[unitId] = updatedPersonnel
+      }
+      
+      if (needsUpdate) {
+        setPersonnelByUnit(updated)
+      }
+    }
+  }, [])
 
   const isGM = userRole === 'gm'
   const currentUnit = units?.find(u => u.id === currentUnitId) || DEFAULT_UNITS[0]
@@ -104,6 +128,10 @@ function App() {
 
     if (filters.specialties.length > 0) {
       filtered = filtered.filter(p => filters.specialties.includes(p.specialty))
+    }
+
+    if (filters.characterTypes.length > 0) {
+      filtered = filtered.filter(p => filters.characterTypes.includes(p.characterType))
     }
 
     return filtered
@@ -352,7 +380,7 @@ function App() {
                 <p className="text-muted-foreground text-lg">No personnel match your search criteria</p>
                 <Button
                   variant="outline"
-                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [] })}
+                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [], characterTypes: [] })}
                   className="mt-4 border-primary/30 hover:bg-primary/10"
                 >
                   Clear Filters

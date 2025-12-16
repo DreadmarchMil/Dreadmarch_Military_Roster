@@ -8,6 +8,7 @@ export interface Personnel {
   species: string
   assignedUnit: string
   status: 'available' | 'deployed' | 'inactive' | 'wia' | 'kia'
+  characterType: 'pc' | 'npc'
   notes: string
 }
 

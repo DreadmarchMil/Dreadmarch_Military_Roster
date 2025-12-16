@@ -19,10 +19,11 @@ export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterLi
     <div className="border border-border bg-card">
       <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-primary/10 border-b-2 border-primary/30 text-xs font-bold uppercase tracking-wider text-primary">
         <div className="col-span-12 sm:col-span-3">Name</div>
+        <div className="hidden sm:block sm:col-span-1">Type</div>
         <div className="hidden sm:block sm:col-span-2">Callsign</div>
         <div className="hidden md:block md:col-span-2">Rank</div>
         <div className="hidden lg:block lg:col-span-2">Assigned Unit</div>
-        <div className="hidden lg:block lg:col-span-2">Specialty</div>
+        <div className="hidden xl:block xl:col-span-1">Specialty</div>
         <div className="hidden sm:block sm:col-span-1">Status</div>
       </div>
 
@@ -36,6 +37,15 @@ export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterLi
             <div className="col-span-12 sm:col-span-3 font-semibold text-foreground group-hover:text-primary transition-colors">
               {person.name}
             </div>
+            <div className="hidden sm:flex sm:col-span-1 items-center">
+              <Badge className={`text-xs uppercase tracking-wider border ${
+                person.characterType === 'pc' 
+                  ? 'bg-primary/20 text-primary border-primary/50' 
+                  : 'bg-muted text-muted-foreground border-border'
+              }`}>
+                {person.characterType === 'pc' ? 'PC' : 'NPC'}
+              </Badge>
+            </div>
             <div className="hidden sm:block sm:col-span-2 text-sm text-accent">
               {person.callsign || '—'}
             </div>
@@ -45,7 +55,7 @@ export function PersonnelRosterList({ personnel, onRowClick }: PersonnelRosterLi
             <div className="hidden lg:block lg:col-span-2 text-sm text-foreground">
               {person.assignedUnit || '—'}
             </div>
-            <div className="hidden lg:block lg:col-span-2 text-sm text-foreground">
+            <div className="hidden xl:block xl:col-span-1 text-sm text-foreground">
               {person.specialty || '—'}
             </div>
             <div className="hidden sm:flex sm:col-span-1 items-center">

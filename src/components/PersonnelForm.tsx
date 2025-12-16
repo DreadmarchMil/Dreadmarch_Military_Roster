@@ -26,6 +26,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
     species: '',
     assignedUnit: '',
     status: 'available',
+    characterType: 'pc',
     notes: ''
   })
 
@@ -40,6 +41,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         species: personnel.species,
         assignedUnit: personnel.assignedUnit,
         status: personnel.status,
+        characterType: personnel.characterType,
         notes: personnel.notes
       })
     } else {
@@ -52,6 +54,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
         species: '',
         assignedUnit: '',
         status: 'available',
+        characterType: 'pc',
         notes: ''
       })
     }
@@ -86,6 +89,26 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
               className="bg-background border-input focus:border-ring focus:ring-ring"
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="characterType" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Character Type
+            </Label>
+            <Select
+              value={formData.characterType}
+              onValueChange={(value: 'pc' | 'npc') =>
+                setFormData({ ...formData, characterType: value })
+              }
+            >
+              <SelectTrigger id="characterType" className="bg-background border-input">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border-border">
+                <SelectItem value="pc">PC (Player Character)</SelectItem>
+                <SelectItem value="npc">NPC (Non-Player Character)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
