@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
+import { useFirebasePersonnel, useFirebaseUnits, useFirebaseCurrentUnit } from '@/hooks/useFirebaseData'
 import { Plus, UserGear, User, Database } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Toaster, toast } from 'sonner'
@@ -20,9 +21,9 @@ import { sortPersonnelByRank } from '@/lib/utils'
 
 function App() {
   const [bootComplete, setBootComplete] = useState(false)
-  const [units, setUnits] = useKV<Unit[]>('military-units', DEFAULT_UNITS)
-  const [currentUnitId, setCurrentUnitId] = useKV<string>('current-unit-id', DEFAULT_UNITS[0].id)
-  const [personnelByUnit, setPersonnelByUnit] = useKV<Record<string, Personnel[]>>('personnel-by-unit', {})
+  const { units, updateUnits, loading: unitsLoading } = useFirebaseUnits(DEFAULT_UNITS)
+  const { currentUnitId, setCurrentUnitId, loading: unitIdLoading } = useFirebaseCurrentUnit(DEFAULT_UNITS[0].id)
+  const { personnelByUnit, updatePersonnel, loading: personnelLoading } = useFirebasePersonnel()
   const [userRole, setUserRole] = useKV<UserRole>('user-role', 'player')
   const [formOpen, setFormOpen] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
@@ -45,7 +46,7 @@ function App() {
 
   useEffect(() => {
     if (units && units.length < DEFAULT_UNITS.length) {
-      setUnits(DEFAULT_UNITS)
+      updateUnits(DEFAULT_UNITS)
     }
     if (units) {
       const needsUpdate = DEFAULT_UNITS.some(defaultUnit => {
@@ -53,10 +54,10 @@ function App() {
         return !existingUnit || existingUnit.parentId !== defaultUnit.parentId
       })
       if (needsUpdate) {
-        setUnits(DEFAULT_UNITS)
+        updateUnits(DEFAULT_UNITS)
       }
     }
-  }, [units, setUnits])
+  }, [units, updateUnits])
 
   useEffect(() => {
     if (personnelByUnit) {
@@ -85,7 +86,7 @@ function App() {
       }
       
       if (needsUpdate) {
-        setPersonnelByUnit(updated)
+        updatePersonnel(updated)
       }
     }
   }, [])
@@ -185,14 +186,13 @@ function App() {
   }, [allPersonnel, filters])
 
   const updatePersonnelForCurrentUnit = (updater: (current: Personnel[]) => Personnel[]) => {
-    setPersonnelByUnit(current => {
-      const unitId = currentUnitId || DEFAULT_UNITS[0].id
-      const currentUnitPersonnel = current?.[unitId] || []
-      return {
-        ...(current || {}),
-        [unitId]: updater(currentUnitPersonnel)
-      }
-    })
+    const unitId = currentUnitId || DEFAULT_UNITS[0].id
+    const currentUnitPersonnel = personnelByUnit?.[unitId] || []
+    const updatedPersonnel = {
+      ...(personnelByUnit || {}),
+      [unitId]: updater(currentUnitPersonnel)
+    }
+    updatePersonnel(updatedPersonnel)
   }
 
   const toggleRole = () => {
@@ -247,20 +247,18 @@ function App() {
     if (deletingId) {
       const person = allPersonnel?.find(p => p.id === deletingId)
       
-      setPersonnelByUnit(current => {
-        const allUnits = { ...(current || {}) }
-        
-        for (const unitId in allUnits) {
-          const unitPersonnel = allUnits[unitId]
-          const filtered = unitPersonnel.filter(p => p.id !== deletingId)
-          if (filtered.length !== unitPersonnel.length) {
-            allUnits[unitId] = filtered
-            break
-          }
+      const allUnits = { ...(personnelByUnit || {}) }
+      
+      for (const unitId in allUnits) {
+        const unitPersonnel = allUnits[unitId]
+        const filtered = unitPersonnel.filter(p => p.id !== deletingId)
+        if (filtered.length !== unitPersonnel.length) {
+          allUnits[unitId] = filtered
+          break
         }
-        
-        return allUnits
-      })
+      }
+      
+      updatePersonnel(allUnits)
       
       toast.success('Personnel record deleted', {
         description: person ? `${person.name} removed from database` : 'Record removed'
@@ -273,31 +271,29 @@ function App() {
     if (editingPersonnel) {
       const updatedPerson = { ...data, id: editingPersonnel.id }
       
-      setPersonnelByUnit(current => {
-        const allUnits = { ...(current || {}) }
-        let oldUnitId: string | null = null
-        
-        for (const unitId in allUnits) {
-          const unitPersonnel = allUnits[unitId]
-          const index = unitPersonnel.findIndex(p => p.id === editingPersonnel.id)
-          if (index !== -1) {
-            oldUnitId = unitId
-            allUnits[unitId] = unitPersonnel.filter(p => p.id !== editingPersonnel.id)
-            break
-          }
+      const allUnits = { ...(personnelByUnit || {}) }
+      let oldUnitId: string | null = null
+      
+      for (const unitId in allUnits) {
+        const unitPersonnel = allUnits[unitId]
+        const index = unitPersonnel.findIndex(p => p.id === editingPersonnel.id)
+        if (index !== -1) {
+          oldUnitId = unitId
+          allUnits[unitId] = unitPersonnel.filter(p => p.id !== editingPersonnel.id)
+          break
         }
-        
-        const newUnitId = units?.find(u => u.name === data.assignedUnit)?.id
-        
-        if (newUnitId) {
-          if (!allUnits[newUnitId]) {
-            allUnits[newUnitId] = []
-          }
-          allUnits[newUnitId] = [...allUnits[newUnitId], updatedPerson]
+      }
+      
+      const newUnitId = units?.find(u => u.name === data.assignedUnit)?.id
+      
+      if (newUnitId) {
+        if (!allUnits[newUnitId]) {
+          allUnits[newUnitId] = []
         }
-        
-        return allUnits
-      })
+        allUnits[newUnitId] = [...allUnits[newUnitId], updatedPerson]
+      }
+      
+      updatePersonnel(allUnits)
       
       toast.success('Personnel record updated', {
         description: `${data.name} has been updated`
@@ -322,30 +318,28 @@ function App() {
   }
 
   const handleToggleCharacterType = (id: string, newType: 'pc' | 'npc') => {
-    setPersonnelByUnit(current => {
-      const allUnits = { ...(current || {}) }
-      
-      for (const unitId in allUnits) {
-        const unitPersonnel = allUnits[unitId]
-        const index = unitPersonnel.findIndex(p => p.id === id)
-        if (index !== -1) {
-          const person = unitPersonnel[index]
-          const updatedPerson = { ...person, characterType: newType }
-          allUnits[unitId] = [
-            ...unitPersonnel.slice(0, index),
-            updatedPerson,
-            ...unitPersonnel.slice(index + 1)
-          ]
-          
-          if (selectedPersonnel?.id === id) {
-            setSelectedPersonnel(updatedPerson)
-          }
-          break
+    const allUnits = { ...(personnelByUnit || {}) }
+    
+    for (const unitId in allUnits) {
+      const unitPersonnel = allUnits[unitId]
+      const index = unitPersonnel.findIndex(p => p.id === id)
+      if (index !== -1) {
+        const person = unitPersonnel[index]
+        const updatedPerson = { ...person, characterType: newType }
+        allUnits[unitId] = [
+          ...unitPersonnel.slice(0, index),
+          updatedPerson,
+          ...unitPersonnel.slice(index + 1)
+        ]
+        
+        if (selectedPersonnel?.id === id) {
+          setSelectedPersonnel(updatedPerson)
         }
+        break
       }
-      
-      return allUnits
-    })
+    }
+    
+    updatePersonnel(allUnits)
     
     toast.success('Character type updated', {
       description: `Changed to ${newType.toUpperCase()}`
@@ -353,30 +347,28 @@ function App() {
   }
 
   const handleStatusChange = (id: string, newStatus: Personnel['status']) => {
-    setPersonnelByUnit(current => {
-      const allUnits = { ...(current || {}) }
-      
-      for (const unitId in allUnits) {
-        const unitPersonnel = allUnits[unitId]
-        const index = unitPersonnel.findIndex(p => p.id === id)
-        if (index !== -1) {
-          const person = unitPersonnel[index]
-          const updatedPerson = { ...person, status: newStatus }
-          allUnits[unitId] = [
-            ...unitPersonnel.slice(0, index),
-            updatedPerson,
-            ...unitPersonnel.slice(index + 1)
-          ]
-          
-          if (selectedPersonnel?.id === id) {
-            setSelectedPersonnel(updatedPerson)
-          }
-          break
+    const allUnits = { ...(personnelByUnit || {}) }
+    
+    for (const unitId in allUnits) {
+      const unitPersonnel = allUnits[unitId]
+      const index = unitPersonnel.findIndex(p => p.id === id)
+      if (index !== -1) {
+        const person = unitPersonnel[index]
+        const updatedPerson = { ...person, status: newStatus }
+        allUnits[unitId] = [
+          ...unitPersonnel.slice(0, index),
+          updatedPerson,
+          ...unitPersonnel.slice(index + 1)
+        ]
+        
+        if (selectedPersonnel?.id === id) {
+          setSelectedPersonnel(updatedPerson)
         }
+        break
       }
-      
-      return allUnits
-    })
+    }
+    
+    updatePersonnel(allUnits)
     
     toast.success('Status updated', {
       description: `Changed to ${newStatus.toUpperCase()}`
@@ -384,8 +376,8 @@ function App() {
   }
 
   const handleImport = (data: ExportData) => {
-    setPersonnelByUnit(data.personnelByUnit)
-    setUnits(data.units)
+    updatePersonnel(data.personnelByUnit)
+    updateUnits(data.units)
     
     const newCurrentUnit = data.units.find(u => u.id === currentUnitId)
     if (!newCurrentUnit && data.units.length > 0) {
@@ -407,7 +399,7 @@ function App() {
 
   const deletingPersonnel = allPersonnel?.find(p => p.id === deletingId)
 
-  if (!bootComplete) {
+  if (!bootComplete || unitsLoading || unitIdLoading || personnelLoading) {
     return <BootScreen onComplete={() => setBootComplete(true)} />
   }
 
