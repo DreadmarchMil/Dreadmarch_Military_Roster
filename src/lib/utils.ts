@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 const UNIT_ORDER = [
+  'high-command',
   '4th-sof',
   '17th-assault',
   'vornskr-company',

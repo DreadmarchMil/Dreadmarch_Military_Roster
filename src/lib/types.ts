@@ -23,6 +23,7 @@ export interface Unit {
 }
 
 export const DEFAULT_UNITS: Unit[] = [
+  { id: 'high-command', name: 'Dreadmarch Military High Command' },
   { id: '4th-sof', name: '4th Special Operations Brigade' },
   { id: '17th-assault', name: '17th Assault Group', parentId: '4th-sof' },
   { id: 'vornskr-company', name: 'Vornskr Company', parentId: '17th-assault' },
