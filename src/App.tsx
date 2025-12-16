@@ -370,20 +370,18 @@ function App() {
       
       <div className="border-b-2 border-primary/30 bg-card/50 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wider text-primary">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1">
+              <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wider text-primary whitespace-nowrap">
                 Dreadmarch Military Personnel Database
               </h1>
-              <div className="mt-2">
-                <UnitSwitcher 
-                  units={units || DEFAULT_UNITS}
-                  currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
-                  onUnitChange={setCurrentUnitId}
-                />
-              </div>
+              <UnitSwitcher 
+                units={units || DEFAULT_UNITS}
+                currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
+                onUnitChange={setCurrentUnitId}
+              />
             </div>
-            <div className="flex items-center gap-3 pt-1">
+            <div className="flex items-center gap-3">
               {isGM && (
                 <Button
                   onClick={handleOpenImportExport}
