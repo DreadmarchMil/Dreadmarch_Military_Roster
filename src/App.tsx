@@ -269,6 +269,32 @@ function App() {
     setDetailsOpen(true)
   }
 
+  const handleToggleCharacterType = (id: string, newType: 'pc' | 'npc') => {
+    setPersonnelByUnit(current => {
+      const allUnits = { ...(current || {}) }
+      
+      for (const unitId in allUnits) {
+        const unitPersonnel = allUnits[unitId]
+        const index = unitPersonnel.findIndex(p => p.id === id)
+        if (index !== -1) {
+          const person = unitPersonnel[index]
+          allUnits[unitId] = [
+            ...unitPersonnel.slice(0, index),
+            { ...person, characterType: newType },
+            ...unitPersonnel.slice(index + 1)
+          ]
+          break
+        }
+      }
+      
+      return allUnits
+    })
+    
+    toast.success('Character type updated', {
+      description: `Changed to ${newType.toUpperCase()}`
+    })
+  }
+
   const handleImport = (data: ExportData) => {
     setPersonnelByUnit(data.personnelByUnit)
     setUnits(data.units)
@@ -390,6 +416,8 @@ function App() {
               <PersonnelRosterList 
                 personnel={filteredPersonnel} 
                 onRowClick={handleCardClick}
+                onToggleCharacterType={handleToggleCharacterType}
+                isGM={isGM}
               />
             )}
           </div>
