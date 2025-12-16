@@ -52,9 +52,13 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         bValue = b.callsign.toLowerCase()
         break
       case 'rank':
-        aValue = a.rank.toLowerCase()
-        bValue = b.rank.toLowerCase()
-        break
+        aValue = parseInt(a.grade) || 0
+        bValue = parseInt(b.grade) || 0
+        compareResult = (bValue as number) - (aValue as number)
+        if (compareResult === 0) {
+          return a.name.localeCompare(b.name)
+        }
+        return sortDirection === 'asc' ? compareResult : -compareResult
       case 'assignedUnit':
         aValue = a.assignedUnit.toLowerCase()
         bValue = b.assignedUnit.toLowerCase()

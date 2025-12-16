@@ -37,10 +37,6 @@ export function sortPersonnelByRank(personnel: Personnel[]): Personnel[] {
     const gradeA = parseInt(a.grade) || 0
     const gradeB = parseInt(b.grade) || 0
     
-    if (gradeA !== gradeB) {
-      return gradeB - gradeA
-    }
-    
-    return a.name.localeCompare(b.name)
+    return gradeB - gradeA || a.name.localeCompare(b.name)
   })
 }
