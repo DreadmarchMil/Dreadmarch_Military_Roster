@@ -24,7 +24,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
     species: '',
     primaryUnit: '',
     detachment: '',
-    status: 'active',
+    status: 'available',
     notes: ''
   })
 
@@ -52,7 +52,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
         species: '',
         primaryUnit: '',
         detachment: '',
-        status: 'active',
+        status: 'available',
         notes: ''
       })
     }
@@ -121,7 +121,7 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
             </Label>
             <Select
               value={formData.status}
-              onValueChange={(value: 'active' | 'inactive' | 'kia' | 'mia') =>
+              onValueChange={(value: 'available' | 'deployed' | 'inactive' | 'wia' | 'kia') =>
                 setFormData({ ...formData, status: value })
               }
             >
@@ -129,10 +129,11 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel }: Perso
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-border">
-                <SelectItem value="active">ACTIVE</SelectItem>
+                <SelectItem value="available">AVAILABLE</SelectItem>
+                <SelectItem value="deployed">DEPLOYED</SelectItem>
                 <SelectItem value="inactive">INACTIVE</SelectItem>
+                <SelectItem value="wia">WIA</SelectItem>
                 <SelectItem value="kia">KIA</SelectItem>
-                <SelectItem value="mia">MIA</SelectItem>
               </SelectContent>
             </Select>
           </div>

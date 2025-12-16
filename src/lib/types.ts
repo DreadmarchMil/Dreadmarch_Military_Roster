@@ -8,7 +8,7 @@ export interface Personnel {
   species: string
   primaryUnit: string
   detachment: string
-  status: 'active' | 'inactive' | 'kia' | 'mia'
+  status: 'available' | 'deployed' | 'inactive' | 'wia' | 'kia'
   notes: string
 }
 
