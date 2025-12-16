@@ -30,7 +30,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="bg-card border-l-2 border-primary/30 w-full sm:max-w-lg overflow-y-auto">
+      <SheetContent className="bg-card border-l-2 border-primary/30 w-full sm:max-w-lg overflow-y-auto p-6">
         <SheetHeader>
           <SheetTitle className="text-xl font-bold uppercase tracking-wider text-primary">
             PERSONNEL FILE
@@ -38,7 +38,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
           <div className="h-px bg-primary/30 mt-2" />
         </SheetHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 mt-6">
           <div className="space-y-4">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">{personnel.name}</h2>
@@ -48,7 +48,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     value={personnel.status} 
                     onValueChange={(value) => onStatusChange(personnel.id, value as Personnel['status'])}
                   >
-                    <SelectTrigger className={`h-6 w-[88px] text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2 [&_svg]:hidden`}>
+                    <SelectTrigger className={`h-7 w-[88px] text-xs uppercase tracking-wider border ${statusColors[personnel.status]} px-2 [&_svg]:hidden`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -60,7 +60,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     </SelectContent>
                   </Select>
                 ) : (
-                  <Badge className={`h-6 flex items-center text-xs uppercase tracking-wider border w-[88px] justify-center ${statusColors[personnel.status]}`}>
+                  <Badge className={`h-7 flex items-center text-xs uppercase tracking-wider border w-[88px] justify-center ${statusColors[personnel.status]}`}>
                     {personnel.status}
                   </Badge>
                 )}
@@ -72,7 +72,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                       const newType = personnel.characterType === 'pc' ? 'npc' : 'pc'
                       onToggleCharacterType(personnel.id, newType)
                     }}
-                    className={`h-6 w-[88px] px-2 text-xs uppercase tracking-wider border transition-colors ${
+                    className={`h-7 w-[88px] px-2 text-xs uppercase tracking-wider border transition-colors ${
                       personnel.characterType === 'pc' 
                         ? 'bg-primary/20 text-primary border-primary/50 hover:bg-primary/30' 
                         : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
@@ -91,7 +91,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                     )}
                   </Button>
                 ) : (
-                  <Badge className={`h-6 w-[88px] flex items-center justify-center text-xs uppercase tracking-wider border ${
+                  <Badge className={`h-7 w-[88px] flex items-center justify-center text-xs uppercase tracking-wider border ${
                     personnel.characterType === 'pc' 
                       ? 'bg-primary/20 text-primary border-primary/50' 
                       : 'bg-muted text-muted-foreground border-border'
