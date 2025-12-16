@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Plus, UserGear, User } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { DeleteConfirmation } from '@/components/DeleteConfirmation'
 import { EmptyState } from '@/components/EmptyState'
 import { PasskeyDialog } from '@/components/PasskeyDialog'
 import { UnitSwitcher } from '@/components/UnitSwitcher'
+import { PersonnelSearch, type SearchFilters } from '@/components/PersonnelSearch'
 import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
 import { DEFAULT_UNITS } from '@/lib/types'
 
@@ -25,6 +26,12 @@ function App() {
   const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel | null>(null)
   const [editingPersonnel, setEditingPersonnel] = useState<Personnel | undefined>(undefined)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [filters, setFilters] = useState<SearchFilters>({
+    searchQuery: '',
+    statuses: [],
+    ranks: [],
+    specialties: [],
+  })
 
   const isGM = userRole === 'gm'
   const currentUnit = units?.find(u => u.id === currentUnitId) || DEFAULT_UNITS[0]
@@ -46,7 +53,52 @@ function App() {
     return [...currentUnitPersonnel, ...childPersonnel]
   }
   
-  const personnel = getPersonnelForUnit(currentUnitId || DEFAULT_UNITS[0].id)
+  const allPersonnel = getPersonnelForUnit(currentUnitId || DEFAULT_UNITS[0].id)
+
+  const availableRanks = useMemo(() => {
+    const ranks = new Set<string>()
+    allPersonnel.forEach(p => {
+      if (p.rank) ranks.add(p.rank)
+    })
+    return Array.from(ranks).sort()
+  }, [allPersonnel])
+
+  const availableSpecialties = useMemo(() => {
+    const specialties = new Set<string>()
+    allPersonnel.forEach(p => {
+      if (p.specialty) specialties.add(p.specialty)
+    })
+    return Array.from(specialties).sort()
+  }, [allPersonnel])
+
+  const filteredPersonnel = useMemo(() => {
+    let filtered = [...allPersonnel]
+
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase()
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.callsign.toLowerCase().includes(query) ||
+        p.rank.toLowerCase().includes(query) ||
+        p.specialty.toLowerCase().includes(query) ||
+        p.role.toLowerCase().includes(query)
+      )
+    }
+
+    if (filters.statuses.length > 0) {
+      filtered = filtered.filter(p => filters.statuses.includes(p.status))
+    }
+
+    if (filters.ranks.length > 0) {
+      filtered = filtered.filter(p => filters.ranks.includes(p.rank))
+    }
+
+    if (filters.specialties.length > 0) {
+      filtered = filtered.filter(p => filters.specialties.includes(p.specialty))
+    }
+
+    return filtered
+  }, [allPersonnel, filters])
 
   const updatePersonnelForCurrentUnit = (updater: (current: Personnel[]) => Personnel[]) => {
     setPersonnelByUnit(current => {
@@ -100,7 +152,7 @@ function App() {
       toast.error('Access denied', { description: 'Only GMs can delete personnel' })
       return
     }
-    const person = personnel?.find(p => p.id === id)
+    const person = allPersonnel?.find(p => p.id === id)
     if (person) {
       setDeletingId(id)
       setDeleteDialogOpen(true)
@@ -109,7 +161,7 @@ function App() {
 
   const confirmDelete = () => {
     if (deletingId) {
-      const person = personnel?.find(p => p.id === deletingId)
+      const person = allPersonnel?.find(p => p.id === deletingId)
       updatePersonnelForCurrentUnit(currentPersonnel => 
         currentPersonnel.filter(p => p.id !== deletingId)
       )
@@ -149,8 +201,7 @@ function App() {
     setDetailsOpen(true)
   }
 
-  const deletingPersonnel = personnel?.find(p => p.id === deletingId)
-  const rosterList = personnel || []
+  const deletingPersonnel = allPersonnel?.find(p => p.id === deletingId)
 
   return (
     <div className="min-h-screen bg-background">
@@ -216,13 +267,34 @@ function App() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {rosterList.length === 0 ? (
+        {allPersonnel.length === 0 ? (
           <EmptyState onAddClick={handleAdd} isGM={isGM} />
         ) : (
-          <PersonnelRosterList 
-            personnel={rosterList} 
-            onRowClick={handleCardClick}
-          />
+          <div className="space-y-6">
+            <PersonnelSearch
+              filters={filters}
+              onFiltersChange={setFilters}
+              availableRanks={availableRanks}
+              availableSpecialties={availableSpecialties}
+            />
+            {filteredPersonnel.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">No personnel match your search criteria</p>
+                <Button
+                  variant="outline"
+                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [] })}
+                  className="mt-4 border-primary/30 hover:bg-primary/10"
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            ) : (
+              <PersonnelRosterList 
+                personnel={filteredPersonnel} 
+                onRowClick={handleCardClick}
+              />
+            )}
+          </div>
         )}
       </main>
 
