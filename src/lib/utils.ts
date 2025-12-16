@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { Unit } from "./types"
+import type { Unit, Personnel } from "./types"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -29,5 +29,18 @@ export function sortUnits(units: Unit[]): Unit[] {
     if (indexB === -1) return -1
     
     return indexA - indexB
+  })
+}
+
+export function sortPersonnelByRank(personnel: Personnel[]): Personnel[] {
+  return [...personnel].sort((a, b) => {
+    const gradeA = parseInt(a.grade) || 0
+    const gradeB = parseInt(b.grade) || 0
+    
+    if (gradeA !== gradeB) {
+      return gradeB - gradeA
+    }
+    
+    return a.name.localeCompare(b.name)
   })
 }

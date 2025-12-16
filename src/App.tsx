@@ -15,6 +15,7 @@ import { ImportExportDialog } from '@/components/ImportExportDialog'
 import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
 import { DEFAULT_UNITS } from '@/lib/types'
 import type { ExportData } from '@/lib/import-export'
+import { sortPersonnelByRank } from '@/lib/utils'
 
 function App() {
   const [units, setUnits] = useKV<Unit[]>('military-units', DEFAULT_UNITS)
@@ -32,7 +33,7 @@ function App() {
   const [filters, setFilters] = useState<SearchFilters>({
     searchQuery: '',
     statuses: [],
-    ranks: [],
+    rankCategories: [],
     specialties: [],
     characterTypes: [],
     assignedUnits: [],
@@ -116,14 +117,6 @@ function App() {
   
   const allPersonnel = getPersonnelForUnit(currentUnitId || DEFAULT_UNITS[0].id)
 
-  const availableRanks = useMemo(() => {
-    const ranks = new Set<string>()
-    allPersonnel.forEach(p => {
-      if (p.rank) ranks.add(p.rank)
-    })
-    return Array.from(ranks).sort()
-  }, [allPersonnel])
-
   const availableSpecialties = useMemo(() => {
     const specialties = new Set<string>()
     allPersonnel.forEach(p => {
@@ -131,6 +124,15 @@ function App() {
     })
     return Array.from(specialties).sort()
   }, [allPersonnel])
+
+  const getRankCategory = (grade: string): string | null => {
+    const gradeNum = parseInt(grade)
+    if (isNaN(gradeNum)) return null
+    if (gradeNum >= 1 && gradeNum <= 3) return 'junior-enlisted'
+    if (gradeNum >= 4 && gradeNum <= 8) return 'nco'
+    if (gradeNum >= 9) return 'officer'
+    return null
+  }
 
   const filteredPersonnel = useMemo(() => {
     let filtered = [...allPersonnel]
@@ -154,8 +156,11 @@ function App() {
       filtered = filtered.filter(p => filters.statuses.includes(p.status))
     }
 
-    if (filters.ranks.length > 0) {
-      filtered = filtered.filter(p => filters.ranks.includes(p.rank))
+    if (filters.rankCategories.length > 0) {
+      filtered = filtered.filter(p => {
+        const category = getRankCategory(p.grade)
+        return category && filters.rankCategories.includes(category)
+      })
     }
 
     if (filters.specialties.length > 0) {
@@ -174,7 +179,7 @@ function App() {
       filtered = filtered.filter(p => p.secondment && filters.secondments.includes(p.secondment))
     }
 
-    return filtered
+    return sortPersonnelByRank(filtered)
   }, [allPersonnel, filters])
 
   const updatePersonnelForCurrentUnit = (updater: (current: Personnel[]) => Personnel[]) => {
@@ -472,7 +477,6 @@ function App() {
             <PersonnelSearch
               filters={filters}
               onFiltersChange={setFilters}
-              availableRanks={availableRanks}
               availableSpecialties={availableSpecialties}
               availableUnits={units || DEFAULT_UNITS}
             />
@@ -481,7 +485,7 @@ function App() {
                 <p className="text-muted-foreground text-lg">No personnel match your search criteria</p>
                 <Button
                   variant="outline"
-                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [], characterTypes: [], assignedUnits: [], secondments: [], showInactive: false })}
+                  onClick={() => setFilters({ searchQuery: '', statuses: [], rankCategories: [], specialties: [], characterTypes: [], assignedUnits: [], secondments: [], showInactive: false })}
                   className="mt-4 border-primary/30 hover:bg-primary/10"
                 >
                   Clear Filters

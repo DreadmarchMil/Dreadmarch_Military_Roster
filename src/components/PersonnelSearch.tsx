@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 export interface SearchFilters {
   searchQuery: string
   statuses: string[]
-  ranks: string[]
+  rankCategories: string[]
   specialties: string[]
   characterTypes: string[]
   assignedUnits: string[]
@@ -24,7 +24,6 @@ export interface SearchFilters {
 interface PersonnelSearchProps {
   filters: SearchFilters
   onFiltersChange: (filters: SearchFilters) => void
-  availableRanks: string[]
   availableSpecialties: string[]
   availableUnits: Array<{ id: string; name: string }>
 }
@@ -32,7 +31,6 @@ interface PersonnelSearchProps {
 export function PersonnelSearch({
   filters,
   onFiltersChange,
-  availableRanks,
   availableSpecialties,
   availableUnits,
 }: PersonnelSearchProps) {
@@ -49,6 +47,12 @@ export function PersonnelSearch({
   const characterTypeOptions = [
     { value: 'pc', label: 'PC (Player Character)' },
     { value: 'npc', label: 'NPC (Non-Player Character)' },
+  ]
+
+  const rankCategoryOptions = [
+    { value: 'junior-enlisted', label: 'Junior Enlisted (Grade 1-3)' },
+    { value: 'nco', label: 'NCOs (Grade 4-8)' },
+    { value: 'officer', label: 'Officers (Grade 9+)' },
   ]
 
   const handleSearchChange = (value: string) => {
@@ -70,11 +74,11 @@ export function PersonnelSearch({
     onFiltersChange({ ...filters, characterTypes: newTypes })
   }
 
-  const handleRankToggle = (rank: string) => {
-    const newRanks = filters.ranks.includes(rank)
-      ? filters.ranks.filter(r => r !== rank)
-      : [...filters.ranks, rank]
-    onFiltersChange({ ...filters, ranks: newRanks })
+  const handleRankCategoryToggle = (category: string) => {
+    const newCategories = filters.rankCategories.includes(category)
+      ? filters.rankCategories.filter(c => c !== category)
+      : [...filters.rankCategories, category]
+    onFiltersChange({ ...filters, rankCategories: newCategories })
   }
 
   const handleSpecialtyToggle = (specialty: string) => {
@@ -103,7 +107,7 @@ export function PersonnelSearch({
     onFiltersChange({
       searchQuery: '',
       statuses: [],
-      ranks: [],
+      rankCategories: [],
       specialties: [],
       characterTypes: [],
       assignedUnits: [],
@@ -119,7 +123,7 @@ export function PersonnelSearch({
   const hasActiveFilters =
     filters.searchQuery ||
     filters.statuses.length > 0 ||
-    filters.ranks.length > 0 ||
+    filters.rankCategories.length > 0 ||
     filters.specialties.length > 0 ||
     filters.characterTypes.length > 0 ||
     filters.assignedUnits.length > 0 ||
@@ -127,7 +131,7 @@ export function PersonnelSearch({
 
   const activeFilterCount =
     filters.statuses.length +
-    filters.ranks.length +
+    filters.rankCategories.length +
     filters.specialties.length +
     filters.characterTypes.length +
     filters.assignedUnits.length +
@@ -242,30 +246,28 @@ export function PersonnelSearch({
                 </div>
               </div>
 
-              {availableRanks.length > 0 && (
-                <div>
-                  <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
-                    Rank
-                  </Label>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {availableRanks.map((rank) => (
-                      <div key={rank} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`rank-${rank}`}
-                          checked={filters.ranks.includes(rank)}
-                          onCheckedChange={() => handleRankToggle(rank)}
-                        />
-                        <label
-                          htmlFor={`rank-${rank}`}
-                          className="text-sm font-medium cursor-pointer"
-                        >
-                          {rank}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
+              <div>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
+                  Rank Category
+                </Label>
+                <div className="space-y-2">
+                  {rankCategoryOptions.map((option) => (
+                    <div key={option.value} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`rank-category-${option.value}`}
+                        checked={filters.rankCategories.includes(option.value)}
+                        onCheckedChange={() => handleRankCategoryToggle(option.value)}
+                      />
+                      <label
+                        htmlFor={`rank-category-${option.value}`}
+                        className="text-sm font-medium cursor-pointer"
+                      >
+                        {option.label}
+                      </label>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
 
               {availableSpecialties.length > 0 && (
                 <div>
