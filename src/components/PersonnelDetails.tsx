@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Pencil, Trash } from '@phosphor-icons/react'
+import { Pencil, Trash, User, Robot } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import type { Personnel } from '@/lib/types'
 
@@ -11,10 +11,11 @@ interface PersonnelDetailsProps {
   onOpenChange: (open: boolean) => void
   onEdit: (personnel: Personnel) => void
   onDelete: (id: string) => void
+  onToggleCharacterType: (id: string, newType: 'pc' | 'npc') => void
   isGM: boolean
 }
 
-export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDelete, isGM }: PersonnelDetailsProps) {
+export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDelete, onToggleCharacterType, isGM }: PersonnelDetailsProps) {
   if (!personnel) return null
 
   const statusColors = {
@@ -43,13 +44,41 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                 <Badge className={`text-xs uppercase tracking-wider border ${statusColors[personnel.status]}`}>
                   {personnel.status}
                 </Badge>
-                <Badge className={`text-xs uppercase tracking-wider border ${
-                  personnel.characterType === 'pc' 
-                    ? 'bg-primary/20 text-primary border-primary/50' 
-                    : 'bg-muted text-muted-foreground border-border'
-                }`}>
-                  {personnel.characterType === 'pc' ? 'PC' : 'NPC'}
-                </Badge>
+                {isGM ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      const newType = personnel.characterType === 'pc' ? 'npc' : 'pc'
+                      onToggleCharacterType(personnel.id, newType)
+                    }}
+                    className={`h-7 px-2 text-xs uppercase tracking-wider border transition-colors ${
+                      personnel.characterType === 'pc' 
+                        ? 'bg-primary/20 text-primary border-primary/50 hover:bg-primary/30' 
+                        : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
+                    }`}
+                  >
+                    {personnel.characterType === 'pc' ? (
+                      <>
+                        <User size={14} className="mr-1" weight="bold" />
+                        PC
+                      </>
+                    ) : (
+                      <>
+                        <Robot size={14} className="mr-1" weight="bold" />
+                        NPC
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Badge className={`text-xs uppercase tracking-wider border ${
+                    personnel.characterType === 'pc' 
+                      ? 'bg-primary/20 text-primary border-primary/50' 
+                      : 'bg-muted text-muted-foreground border-border'
+                  }`}>
+                    {personnel.characterType === 'pc' ? 'PC' : 'NPC'}
+                  </Badge>
+                )}
               </div>
             </div>
 

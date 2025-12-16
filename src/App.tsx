@@ -416,8 +416,6 @@ function App() {
               <PersonnelRosterList 
                 personnel={filteredPersonnel} 
                 onRowClick={handleCardClick}
-                onToggleCharacterType={handleToggleCharacterType}
-                isGM={isGM}
               />
             )}
           </div>
@@ -438,6 +436,7 @@ function App() {
         onOpenChange={setDetailsOpen}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onToggleCharacterType={handleToggleCharacterType}
         isGM={isGM}
       />
 
