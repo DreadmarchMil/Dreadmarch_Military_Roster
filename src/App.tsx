@@ -278,11 +278,16 @@ function App() {
         const index = unitPersonnel.findIndex(p => p.id === id)
         if (index !== -1) {
           const person = unitPersonnel[index]
+          const updatedPerson = { ...person, characterType: newType }
           allUnits[unitId] = [
             ...unitPersonnel.slice(0, index),
-            { ...person, characterType: newType },
+            updatedPerson,
             ...unitPersonnel.slice(index + 1)
           ]
+          
+          if (selectedPersonnel?.id === id) {
+            setSelectedPersonnel(updatedPerson)
+          }
           break
         }
       }
@@ -304,11 +309,16 @@ function App() {
         const index = unitPersonnel.findIndex(p => p.id === id)
         if (index !== -1) {
           const person = unitPersonnel[index]
+          const updatedPerson = { ...person, status: newStatus }
           allUnits[unitId] = [
             ...unitPersonnel.slice(0, index),
-            { ...person, status: newStatus },
+            updatedPerson,
             ...unitPersonnel.slice(index + 1)
           ]
+          
+          if (selectedPersonnel?.id === id) {
+            setSelectedPersonnel(updatedPerson)
+          }
           break
         }
       }
@@ -374,14 +384,16 @@ function App() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button
-                onClick={handleOpenImportExport}
-                variant="outline"
-                className="border-primary/30 hover:bg-primary/10 font-semibold uppercase tracking-wide"
-              >
-                <Database size={20} className="mr-2" />
-                <span className="hidden sm:inline">Data</span>
-              </Button>
+              {isGM && (
+                <Button
+                  onClick={handleOpenImportExport}
+                  variant="outline"
+                  className="border-primary/30 hover:bg-primary/10 font-semibold uppercase tracking-wide"
+                >
+                  <Database size={20} className="mr-2" />
+                  <span className="hidden sm:inline">Data</span>
+                </Button>
+              )}
               <Button
                 onClick={toggleRole}
                 variant="outline"
