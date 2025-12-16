@@ -15,3 +15,13 @@ export interface Personnel {
 export type PersonnelFormData = Omit<Personnel, 'id'>
 
 export type UserRole = 'player' | 'gm'
+
+export interface Unit {
+  id: string
+  name: string
+}
+
+export const DEFAULT_UNITS: Unit[] = [
+  { id: '17th-assault', name: '17th Assault Group' },
+  { id: '4th-sof', name: '4th Special Operations Brigade' }
+]

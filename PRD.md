@@ -1,6 +1,6 @@
 # Planning Guide
 
-A personnel management database for tracking characters and NPCs in a Star Wars Sith Empire military roleplay community, designed to feel like an authentic in-universe Imperial terminal system.
+A personnel management database for tracking characters and NPCs across multiple military units in a Star Wars Sith Empire roleplay community (Dreadmarch), designed to feel like an authentic in-universe Imperial terminal system.
 
 **Experience Qualities**:
 1. **Authoritative** - The interface should evoke the rigid, militaristic hierarchy of the Sith Empire with precise data organization and commanding visual presence
@@ -12,6 +12,13 @@ This is a CRUD application focused on managing a roster list with form-based edi
 
 ## Essential Features
 
+**Unit Switcher**
+- Functionality: Switch between different military units to view and manage unit-specific rosters
+- Purpose: Organize personnel across multiple units within the Dreadmarch organization (e.g., 17th Assault Group, 4th Special Operations Brigade)
+- Trigger: User selects a unit from the dropdown selector
+- Progression: Select unit dropdown → Choose unit → Roster updates to show that unit's personnel → Subheader updates with unit name
+- Success criteria: Each unit maintains its own separate personnel roster; switching units displays the correct roster; current unit selection persists between sessions
+
 **Access Control (Player vs GM Mode)**
 - Functionality: Toggle between Player (read-only) and GM (full editing) access levels
 - Purpose: Allow GMs to manage the roster while giving players view-only access to personnel data
@@ -20,18 +27,18 @@ This is a CRUD application focused on managing a roster list with form-based edi
 - Success criteria: Players cannot add/edit/delete personnel; GMs have full CRUD access; mode persists between sessions
 
 **View Roster List**
-- Functionality: Display all characters/NPCs in a scannable list format with key information visible
-- Purpose: Provides quick overview of all personnel in the unit
-- Trigger: Default view on application load
-- Progression: App loads → Roster list displays → User scans personnel entries
-- Success criteria: All saved characters display with name, rank, and role clearly visible
+- Functionality: Display all characters/NPCs for the current unit in a scannable list format with key information visible
+- Purpose: Provides quick overview of all personnel in the selected unit
+- Trigger: Default view on application load or after switching units
+- Progression: App loads/unit switches → Roster list displays → User scans personnel entries for current unit
+- Success criteria: All saved characters for the current unit display with name, rank, and role clearly visible; subtitle shows "[Unit Name] Personnel List — Classified Access"
 
 **Add New Personnel**
-- Functionality: Create new character/NPC entry with essential fields (GM only)
-- Purpose: Expand the roster with new personnel records
+- Functionality: Create new character/NPC entry for the current unit with essential fields (GM only)
+- Purpose: Expand the roster with new personnel records for the selected unit
 - Trigger: GM clicks "Add Personnel" button
-- Progression: Click add button → Form dialog opens → Fill fields → Save → New entry appears in roster
-- Success criteria: New personnel entry persists and displays correctly in the roster list; button hidden for players
+- Progression: Click add button → Form dialog opens → Fill fields → Save → New entry appears in current unit's roster
+- Success criteria: New personnel entry persists in the current unit's roster and displays correctly; button hidden for players
 
 **Edit Personnel**
 - Functionality: Modify existing character/NPC information (GM only)
@@ -56,7 +63,8 @@ This is a CRUD application focused on managing a roster list with form-based edi
 
 ## Edge Case Handling
 
-- **Empty Roster State**: Display an Imperial-themed empty state message with different text for players vs GMs; show "Initialize Personnel Record" button only for GMs
+- **Empty Unit Roster**: Display unit-specific empty state message showing which unit has no personnel yet; show "Initialize Personnel Record" button only for GMs
+- **Unit Switching with Open Dialogs**: Close any open detail/edit dialogs when switching units to avoid confusion
 - **Player Access Attempts**: Show error toasts when players attempt restricted actions (add/edit/delete)
 - **Long Names/Text**: Truncate with ellipsis in list view, show full text in detail/edit views
 - **Duplicate Names**: Allow duplicates (common in military settings) but ensure each has unique identifier
@@ -96,6 +104,7 @@ Animations should feel technical and precise, like interface elements snapping i
 ## Component Selection
 
 - **Components**:
+  - Select: Unit switcher dropdown with custom styling to match Imperial theme
   - Card: Container for each personnel entry in the list, modified with dark background and subtle red border on hover
   - Dialog: For add/edit personnel forms, styled as Imperial terminal windows with red accent borders
   - Button: Primary actions in crimson, secondary in muted gray, all with sharp edges (reduced border radius)

@@ -9,10 +9,14 @@ import { PersonnelDetails } from '@/components/PersonnelDetails'
 import { DeleteConfirmation } from '@/components/DeleteConfirmation'
 import { EmptyState } from '@/components/EmptyState'
 import { PasskeyDialog } from '@/components/PasskeyDialog'
-import type { Personnel, PersonnelFormData, UserRole } from '@/lib/types'
+import { UnitSwitcher } from '@/components/UnitSwitcher'
+import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
+import { DEFAULT_UNITS } from '@/lib/types'
 
 function App() {
-  const [personnel, setPersonnel] = useKV<Personnel[]>('imperial-roster', [])
+  const [units] = useKV<Unit[]>('military-units', DEFAULT_UNITS)
+  const [currentUnitId, setCurrentUnitId] = useKV<string>('current-unit-id', DEFAULT_UNITS[0].id)
+  const [personnelByUnit, setPersonnelByUnit] = useKV<Record<string, Personnel[]>>('personnel-by-unit', {})
   const [userRole, setUserRole] = useKV<UserRole>('user-role', 'player')
   const [formOpen, setFormOpen] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
@@ -23,6 +27,19 @@ function App() {
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const isGM = userRole === 'gm'
+  const currentUnit = units?.find(u => u.id === currentUnitId) || DEFAULT_UNITS[0]
+  const personnel = personnelByUnit?.[currentUnitId || DEFAULT_UNITS[0].id] || []
+
+  const updatePersonnelForCurrentUnit = (updater: (current: Personnel[]) => Personnel[]) => {
+    setPersonnelByUnit(current => {
+      const unitId = currentUnitId || DEFAULT_UNITS[0].id
+      const currentUnitPersonnel = current?.[unitId] || []
+      return {
+        ...(current || {}),
+        [unitId]: updater(currentUnitPersonnel)
+      }
+    })
+  }
 
   const toggleRole = () => {
     if (isGM) {
@@ -75,7 +92,9 @@ function App() {
   const confirmDelete = () => {
     if (deletingId) {
       const person = personnel?.find(p => p.id === deletingId)
-      setPersonnel(currentPersonnel => (currentPersonnel || []).filter(p => p.id !== deletingId))
+      updatePersonnelForCurrentUnit(currentPersonnel => 
+        currentPersonnel.filter(p => p.id !== deletingId)
+      )
       toast.success('Personnel record deleted', {
         description: person ? `${person.name} removed from database` : 'Record removed'
       })
@@ -85,8 +104,8 @@ function App() {
 
   const handleSubmit = (data: PersonnelFormData) => {
     if (editingPersonnel) {
-      setPersonnel(currentPersonnel =>
-        (currentPersonnel || []).map(p =>
+      updatePersonnelForCurrentUnit(currentPersonnel =>
+        currentPersonnel.map(p =>
           p.id === editingPersonnel.id ? { ...data, id: editingPersonnel.id } : p
         )
       )
@@ -98,7 +117,9 @@ function App() {
         ...data,
         id: Date.now().toString()
       }
-      setPersonnel(currentPersonnel => [...(currentPersonnel || []), newPersonnel])
+      updatePersonnelForCurrentUnit(currentPersonnel => 
+        [...currentPersonnel, newPersonnel]
+      )
       toast.success('Personnel record created', {
         description: `${data.name} added to database`
       })
@@ -131,10 +152,10 @@ function App() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wider text-primary">
-                Imperial Personnel Database
+                Dreadmarch Military Personnel Database
               </h1>
               <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide mt-1">
-                Sith Empire Military Unit — Classified Access
+                {currentUnit.name} Personnel List — Classified Access
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -168,6 +189,13 @@ function App() {
                 </Button>
               )}
             </div>
+          </div>
+          <div className="mt-4">
+            <UnitSwitcher 
+              units={units || DEFAULT_UNITS}
+              currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
+              onUnitChange={setCurrentUnitId}
+            />
           </div>
         </div>
       </div>
