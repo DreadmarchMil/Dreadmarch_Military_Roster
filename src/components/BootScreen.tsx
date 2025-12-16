@@ -7,25 +7,25 @@ interface BootScreenProps {
   onComplete: () => void
 }
 
+const bootSequence = [
+  { text: 'DREADMARCH MILITARY NETWORK', delay: 400 },
+  { text: 'PERSONNEL DATABASE MANAGEMENT SYSTEM v3.7.2', delay: 300 },
+  { text: '', delay: 200 },
+  { text: 'Initializing secure connection...', delay: 600 },
+  { text: '> Establishing encrypted channel... OK', delay: 400 },
+  { text: '> Authenticating Imperial credentials... OK', delay: 500 },
+  { text: '> Loading personnel registry... OK', delay: 450 },
+  { text: '> Synchronizing unit hierarchies... OK', delay: 400 },
+  { text: '> Verifying security clearance... OK', delay: 500 },
+  { text: '', delay: 300 },
+  { text: 'SYSTEM READY', delay: 600 },
+  { text: 'ACCESS GRANTED - CLASSIFIED PERSONNEL DATABASE', delay: 800 },
+]
+
 export function BootScreen({ onComplete }: BootScreenProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [showCursor, setShowCursor] = useState(true)
   const [bootComplete, setBootComplete] = useState(false)
-
-  const bootSequence = [
-    { text: 'DREADMARCH MILITARY NETWORK', delay: 400 },
-    { text: 'PERSONNEL DATABASE MANAGEMENT SYSTEM v3.7.2', delay: 300 },
-    { text: '', delay: 200 },
-    { text: 'Initializing secure connection...', delay: 600 },
-    { text: '> Establishing encrypted channel... OK', delay: 400 },
-    { text: '> Authenticating Imperial credentials... OK', delay: 500 },
-    { text: '> Loading personnel registry... OK', delay: 450 },
-    { text: '> Synchronizing unit hierarchies... OK', delay: 400 },
-    { text: '> Verifying security clearance... OK', delay: 500 },
-    { text: '', delay: 300 },
-    { text: 'SYSTEM READY', delay: 600 },
-    { text: 'ACCESS GRANTED - CLASSIFIED PERSONNEL DATABASE', delay: 800 },
-  ]
 
   useEffect(() => {
     const timer = setTimeout(() => {
