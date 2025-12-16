@@ -182,14 +182,15 @@ export function PersonnelSearch({
               )}
             </div>
 
-            <div className="flex items-center justify-between py-2 px-3 bg-muted/30 rounded border border-primary/20">
-              <Label htmlFor="show-inactive" className="text-sm font-semibold uppercase tracking-wide cursor-pointer">
+            <div className="flex items-center justify-between py-1 px-2 bg-muted/20 rounded">
+              <Label htmlFor="show-inactive" className="text-xs text-muted-foreground cursor-pointer">
                 Show Inactive
               </Label>
               <Checkbox
                 id="show-inactive"
                 checked={filters.showInactive}
                 onCheckedChange={handleShowInactiveToggle}
+                className="scale-90"
               />
             </div>
 
