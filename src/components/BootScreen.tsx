@@ -35,8 +35,16 @@ export function BootScreen({ onComplete }: BootScreenProps) {
       }
     }
 
+    const handleDoubleClick = () => {
+      onComplete()
+    }
+
     window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
+    window.addEventListener('dblclick', handleDoubleClick)
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress)
+      window.removeEventListener('dblclick', handleDoubleClick)
+    }
   }, [onComplete])
 
   useEffect(() => {
@@ -137,7 +145,7 @@ export function BootScreen({ onComplete }: BootScreenProps) {
             transition={{ duration: 0.5, delay: 1 }}
             className="absolute bottom-8 left-0 right-0 text-center text-muted-foreground text-xs"
           >
-            Press <span className="text-accent font-semibold">SPACEBAR</span> to skip
+            Press <span className="text-accent font-semibold">SPACEBAR</span> or <span className="text-accent font-semibold">DOUBLE-CLICK</span> to skip
           </motion.div>
         </div>
       </motion.div>
