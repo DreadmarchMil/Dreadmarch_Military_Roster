@@ -8,22 +8,22 @@ interface UnitSwitcherProps {
 }
 
 export function UnitSwitcher({ units, currentUnitId, onUnitChange }: UnitSwitcherProps) {
-  const currentUnit = units.find(u => u.id === currentUnitId)
+  const currentUnit = units?.find(u => u.id === currentUnitId)
 
   const getUnitDepth = (unitId: string): number => {
-    const unit = units.find(u => u.id === unitId)
+    const unit = units?.find(u => u.id === unitId)
     if (!unit?.parentId) return 0
     return 1 + getUnitDepth(unit.parentId)
   }
 
-  const sortedUnits = [...units].sort((a, b) => {
+  const sortedUnits = units ? [...units].sort((a, b) => {
     const getPath = (unit: Unit): string => {
       if (!unit.parentId) return unit.id
       const parent = units.find(u => u.id === unit.parentId)
       return parent ? `${getPath(parent)}/${unit.id}` : unit.id
     }
     return getPath(a).localeCompare(getPath(b))
-  })
+  }) : []
 
   return (
     <Select value={currentUnitId} onValueChange={onUnitChange}>

@@ -188,11 +188,11 @@ export function PersonnelForm({ open, onOpenChange, onSubmit, personnel, units }
                   <SelectValue placeholder="Select unit" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border">
-                  {units.map((unit) => (
+                  {units?.map((unit) => (
                     <SelectItem key={unit.id} value={unit.name}>
                       {unit.name}
                     </SelectItem>
-                  ))}
+                  )) || []}
                 </SelectContent>
               </Select>
             </div>
