@@ -41,6 +41,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
         <div className="space-y-4 mt-1">
           <div className="space-y-3">
             <div>
+              <div className="text-lg font-semibold text-muted-foreground uppercase tracking-wide mb-0.5">{personnel.rank || '—'}</div>
               <h2 className="text-2xl font-bold text-foreground mb-1.5">{personnel.name}</h2>
               <div className="flex items-center gap-2">
                 {isGM && onStatusChange ? (
