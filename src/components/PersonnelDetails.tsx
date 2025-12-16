@@ -38,8 +38,8 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
           <div className="h-px bg-primary/30 mt-2" />
         </SheetHeader>
 
-        <div className="space-y-6 mt-1">
-          <div className="space-y-4">
+        <div className="space-y-4 mt-1">
+          <div className="space-y-3">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-1.5">{personnel.name}</h2>
               <div className="flex items-center gap-2">
@@ -103,8 +103,8 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
 
             <Separator className="bg-border/50" />
 
-            <div className="grid gap-4">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Rank</div>
                   <div className="text-sm text-foreground">{personnel.rank || '—'}</div>
@@ -116,7 +116,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Role</div>
                   <div className="text-sm text-foreground">{personnel.role || '—'}</div>
@@ -133,7 +133,7 @@ export function PersonnelDetails({ personnel, open, onOpenChange, onEdit, onDele
                 <div className="text-sm text-foreground">{personnel.species || '—'}</div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Assigned Unit</div>
                   <div className="text-sm text-foreground">{personnel.assignedUnit || '—'}</div>
