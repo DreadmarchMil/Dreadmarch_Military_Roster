@@ -37,6 +37,7 @@ function App() {
     characterTypes: [],
     assignedUnits: [],
     secondments: [],
+    showInactive: false,
   })
 
   useEffect(() => {
@@ -129,6 +130,10 @@ function App() {
 
   const filteredPersonnel = useMemo(() => {
     let filtered = [...allPersonnel]
+
+    if (!filters.showInactive) {
+      filtered = filtered.filter(p => p.status !== 'inactive')
+    }
 
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase()
@@ -472,7 +477,7 @@ function App() {
                 <p className="text-muted-foreground text-lg">No personnel match your search criteria</p>
                 <Button
                   variant="outline"
-                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [], characterTypes: [], assignedUnits: [], secondments: [] })}
+                  onClick={() => setFilters({ searchQuery: '', statuses: [], ranks: [], specialties: [], characterTypes: [], assignedUnits: [], secondments: [], showInactive: false })}
                   className="mt-4 border-primary/30 hover:bg-primary/10"
                 >
                   Clear Filters

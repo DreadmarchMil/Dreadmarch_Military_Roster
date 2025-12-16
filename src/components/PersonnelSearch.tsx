@@ -18,6 +18,7 @@ export interface SearchFilters {
   characterTypes: string[]
   assignedUnits: string[]
   secondments: string[]
+  showInactive: boolean
 }
 
 interface PersonnelSearchProps {
@@ -107,7 +108,12 @@ export function PersonnelSearch({
       characterTypes: [],
       assignedUnits: [],
       secondments: [],
+      showInactive: false,
     })
+  }
+
+  const handleShowInactiveToggle = () => {
+    onFiltersChange({ ...filters, showInactive: !filters.showInactive })
   }
 
   const hasActiveFilters =
@@ -174,6 +180,17 @@ export function PersonnelSearch({
                   Clear
                 </Button>
               )}
+            </div>
+
+            <div className="flex items-center justify-between py-2 px-3 bg-muted/30 rounded border border-primary/20">
+              <Label htmlFor="show-inactive" className="text-sm font-semibold uppercase tracking-wide cursor-pointer">
+                Show Inactive
+              </Label>
+              <Checkbox
+                id="show-inactive"
+                checked={filters.showInactive}
+                onCheckedChange={handleShowInactiveToggle}
+              />
             </div>
 
             <div className="space-y-3">
