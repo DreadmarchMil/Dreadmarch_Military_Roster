@@ -12,10 +12,9 @@ interface PersonnelRosterListProps {
   onRowClick: (personnel: Personnel) => void
   onStatusChange?: (id: string, status: Personnel['status']) => void
   isGM?: boolean
-  currentUnitId?: string
 }
 
-export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isGM, currentUnitId }: PersonnelRosterListProps) {
+export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isGM }: PersonnelRosterListProps) {
   const [sortField, setSortField] = useState<SortField | null>('rank')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
@@ -150,13 +149,10 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
             className="grid grid-cols-[2fr_1.2fr_1.2fr_1.2fr_1.2fr_1.8fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 hover:bg-primary/5 transition-colors group items-center"
           >
             <div 
-              className="font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer flex items-center gap-2"
+              className="font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer"
               onClick={() => onRowClick(person)}
             >
               {person.name}
-              {currentUnitId && person.secondment === currentUnitId && (
-                <Badge className="h-4 px-1 text-[0.6rem] bg-accent/20 text-accent border-accent/50">TDY</Badge>
-              )}
             </div>
             <div 
               className="text-accent cursor-pointer"

@@ -500,7 +500,6 @@ function App() {
                 onRowClick={handleCardClick}
                 onStatusChange={handleStatusChange}
                 isGM={isGM}
-                currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
               />
             )}
           </div>
