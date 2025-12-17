@@ -43,7 +43,11 @@ function setInMock(path: string, value: any) {
     cur = cur[p]
   }
   cur[parts[parts.length - 1]] = value
-  try { localStorage.setItem('__firebase_adapter_mock__', JSON.stringify(mockStore)) } catch {}
+  try { 
+    localStorage.setItem('__firebase_adapter_mock__', JSON.stringify(mockStore)) 
+  } catch {
+    // Best-effort localStorage persistence; silent fail on storage errors
+  }
   notifyListeners(path)
 }
 
@@ -51,7 +55,9 @@ function setInMock(path: string, value: any) {
 try {
   const raw = localStorage.getItem('__firebase_adapter_mock__')
   if (raw) Object.assign(mockStore, JSON.parse(raw))
-} catch {}
+} catch {
+  // Best-effort localStorage restore; silent fail on parse errors
+}
 
 // ---------- Firebase lazy init (only when enabled) ----------
 let firebaseDb: any = null
@@ -122,11 +128,17 @@ export async function subscribe(path: string, cb: (value: any) => void): Promise
     try {
       // onValue returns an unsubscribe function only in modular SDK patterns; this is a minimal wrapper
       // If the environment supports off(), add the proper cleanup here.
-    } catch {}
+    } catch {
+      // Best-effort cleanup; silent fail on unsubscribe errors
+    }
   }
 }
 
 export function clearMock() {
   Object.keys(mockStore).forEach(k => delete (mockStore as any)[k])
-  try { localStorage.removeItem('__firebase_adapter_mock__') } catch {}
+  try { 
+    localStorage.removeItem('__firebase_adapter_mock__') 
+  } catch {
+    // Best-effort cleanup; silent fail on storage errors
+  }
 }

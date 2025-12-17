@@ -1,4 +1,4 @@
-import { read, write, subscribe, isEnabled as firebaseEnabled } from './firebase-adapter'
+import { read, write, subscribe } from './firebase-adapter'
 import type { Personnel, Unit } from './types'
 import { hashValue, verifyHash } from './hash'
 
