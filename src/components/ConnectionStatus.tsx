@@ -6,7 +6,7 @@ interface ConnectionStatusProps {
 }
 
 export function ConnectionStatus({ isConnected }: ConnectionStatusProps) {
-  const connectedColor = 'oklch(0.65_0.20_145)' // Green color for connected state
+  const connectedColor = 'oklch(0.65 0.20 145)' // Green color for connected state
   
   return (
     <Tooltip>
