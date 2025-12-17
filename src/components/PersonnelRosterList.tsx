@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CaretUp, CaretDown } from '@phosphor-icons/react'
 import type { Personnel } from '@/lib/types'
 
-type SortField = 'name' | 'callsign' | 'rank' | 'assignedUnit' | 'secondment' | 'specialty' | 'status' | 'characterType'
+type SortField = 'name' | 'callsign' | 'rank' | 'role' | 'assignedUnit' | 'secondment' | 'specialty' | 'status' | 'characterType'
 type SortDirection = 'asc' | 'desc'
 
 interface PersonnelRosterListProps {
@@ -71,6 +71,10 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         aValue = a.specialty.toLowerCase()
         bValue = b.specialty.toLowerCase()
         break
+      case 'role':
+        aValue = a.role.toLowerCase()
+        bValue = b.role.toLowerCase()
+        break
       case 'status':
         aValue = a.status
         bValue = b.status
@@ -118,8 +122,8 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('rank')}>
           Rank<SortIcon field="rank" />
         </div>
-        <div className="text-foreground">
-          Role
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('role')}>
+          Role<SortIcon field="role" />
         </div>
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('assignedUnit')}>
           Assigned Unit<SortIcon field="assignedUnit" />
