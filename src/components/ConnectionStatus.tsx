@@ -6,15 +6,17 @@ interface ConnectionStatusProps {
 }
 
 export function ConnectionStatus({ isConnected }: ConnectionStatusProps) {
+  const connectedColor = 'oklch(0.65_0.20_145)' // Green color for connected state
+  
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-primary/30 bg-card/80 text-xs font-semibold uppercase tracking-wide">
           {isConnected ? (
             <>
-              <div className="size-2 rounded-full bg-[oklch(0.65_0.20_145)] animate-pulse" />
-              <WifiHigh size={16} className="text-[oklch(0.65_0.20_145)]" />
-              <span className="hidden sm:inline text-[oklch(0.65_0.20_145)]">Connected</span>
+              <div className="size-2 rounded-full animate-pulse" style={{ backgroundColor: connectedColor }} />
+              <WifiHigh size={16} style={{ color: connectedColor }} />
+              <span className="hidden sm:inline" style={{ color: connectedColor }}>Connected</span>
             </>
           ) : (
             <>
