@@ -12,18 +12,21 @@ export const dbRefs = {
 
 export const firebaseHelpers = {
   subscribeToPersonnel: (callback: (data: Record<string, Personnel[]>) => void) => {
-    const unsub = subscribe(dbRefs.personnelByUnit(), (val) => callback(val || {}))
-    return unsub
+    let unsub: (() => void) | null = null
+    subscribe(dbRefs.personnelByUnit(), (val) => callback(val || {})).then(fn => { unsub = fn })
+    return () => { if (unsub) unsub() }
   },
 
   subscribeToUnits: (callback: (data: Unit[]) => void) => {
-    const unsub = subscribe(dbRefs.units(), (val) => callback((val && Array.isArray(val)) ? val : []))
-    return unsub
+    let unsub: (() => void) | null = null
+    subscribe(dbRefs.units(), (val) => callback((val && Array.isArray(val)) ? val : [])).then(fn => { unsub = fn })
+    return () => { if (unsub) unsub() }
   },
 
   subscribeToCurrentUnitId: (callback: (unitId: string) => void) => {
-    const unsub = subscribe(dbRefs.currentUnitId(), (val) => { if (val) callback(val) })
-    return unsub
+    let unsub: (() => void) | null = null
+    subscribe(dbRefs.currentUnitId(), (val) => { if (val) callback(val) }).then(fn => { unsub = fn })
+    return () => { if (unsub) unsub() }
   },
 
   updatePersonnel: async (data: Record<string, Personnel[]>) => {
