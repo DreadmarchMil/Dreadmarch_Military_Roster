@@ -117,9 +117,11 @@ function App() {
     // Get the unit name for matching secondments
     const currentUnitName = units?.find(u => u.id === unitId)?.name
     const allUnitsPersonnel = Object.values(personnelByUnit || {}).flat()
-    const secondedPersonnel = allUnitsPersonnel.filter(p => 
-      p.secondment === currentUnitName && p.assignedUnit && p.assignedUnit.trim() !== ''
-    )
+    const secondedPersonnel = currentUnitName 
+      ? allUnitsPersonnel.filter(p => 
+          p.secondment === currentUnitName && p.assignedUnit && p.assignedUnit.trim() !== ''
+        )
+      : []
     
     const allPersonnel = [...currentUnitPersonnel, ...childPersonnel, ...secondedPersonnel]
     const uniquePersonnel = Array.from(new Map(allPersonnel.map(p => [p.id, p])).values())
