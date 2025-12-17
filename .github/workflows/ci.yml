@@ -20,5 +20,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Lint
+        # Note: continue-on-error is temporary due to pre-existing lint issues in other files
+        # Once those are fixed, this should be removed to enforce strict linting
         run: npm run lint || echo "Lint found issues but continuing for now"
         continue-on-error: true
