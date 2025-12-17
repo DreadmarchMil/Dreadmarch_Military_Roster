@@ -13,22 +13,28 @@ interface PasskeyDialogProps {
 }
 
 export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogProps) {
-  const [storedPasskey, setStoredPasskey] = useState('')
   const [inputPasskey, setInputPasskey] = useState('')
   const [confirmPasskey, setConfirmPasskey] = useState('')
   const [error, setError] = useState('')
   const [showPasskey, setShowPasskey] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-
-  const isFirstTime = !storedPasskey
+  const [isFirstTime, setIsFirstTime] = useState(true)
 
   useEffect(() => {
-    firebaseHelpers.getPasskey().then(passkey => {
-      if (passkey) setStoredPasskey(passkey)
-    }).catch(error => {
-      console.error('Failed to fetch passkey from Firebase:', error)
-    })
-  }, [])
+    async function checkForExistingPasskey() {
+      try {
+        const existingPasskey = await firebaseHelpers.getPasskey()
+        setIsFirstTime(!existingPasskey)
+      } catch (error) {
+        console.error('Error checking for existing passkey:', error)
+        setIsFirstTime(true)
+      }
+    }
+    
+    if (open) {
+      checkForExistingPasskey()
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) {
@@ -40,11 +46,12 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
     }
   }, [open])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
     if (isFirstTime) {
+      // First-time setup: set the passkey
       if (!inputPasskey.trim()) {
         setError('Passkey cannot be empty')
         return
@@ -53,20 +60,36 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
         setError('Passkeys do not match')
         return
       }
-      firebaseHelpers.setPasskey(inputPasskey).then(() => {
-        setStoredPasskey(inputPasskey)
+      
+      try {
+        // Hash and store the passkey
+        await firebaseHelpers.setPasskey(inputPasskey)
+        setIsFirstTime(false)
         onSuccess()
         onOpenChange(false)
-      }).catch(error => {
-        console.error('Failed to set passkey in Firebase:', error)
-        setError('Failed to save passkey. Please try again.')
-      })
+      } catch (error) {
+        setError('Failed to set passkey. Please try again.')
+        console.error('Error setting passkey:', error)
+      }
     } else {
-      if (inputPasskey === storedPasskey) {
-        onSuccess()
-        onOpenChange(false)
-      } else {
-        setError('Incorrect passkey')
+      // Verification: check against stored hash
+      if (!inputPasskey.trim()) {
+        setError('Please enter the passkey')
+        return
+      }
+      
+      try {
+        const isValid = await firebaseHelpers.verifyPasskey(inputPasskey)
+        
+        if (isValid) {
+          onSuccess()
+          onOpenChange(false)
+        } else {
+          setError('Incorrect passkey')
+        }
+      } catch (error) {
+        setError('Failed to verify passkey. Please try again.')
+        console.error('Error verifying passkey:', error)
       }
     }
   }

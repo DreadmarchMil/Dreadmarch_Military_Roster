@@ -145,6 +145,18 @@ Once you're ready for production, update your Firebase Realtime Database rules:
 
 For a more secure setup with GM authentication, consider implementing Firebase Authentication.
 
+### Passkey Security
+
+The GM passkey is protected using SHA-256 hashing:
+- ✅ Passkeys are never stored in plain text
+- ✅ Even with database read access, the actual passkey cannot be recovered
+- ✅ Hashing is performed using the Web Crypto API (built into browsers)
+- ✅ No external dependencies required
+
+**Note:** The first GM to access the system sets the passkey. This passkey is then hashed and stored in Firebase. All subsequent GM logins must use the correct passkey.
+
+**To reset the passkey:** Go to Firebase Console → Realtime Database → Delete the `gmPasskey` node. The next GM to log in will set a new passkey.
+
 ## 🎨 Design Philosophy
 
 The interface evokes the cold, calculated aesthetic of Sith Empire technology with:

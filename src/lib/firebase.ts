@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, onValue, set, get } from 'firebase/database'
 import type { Personnel, Unit } from './types'
+import { hashValue, verifyHash } from './hash'
 
 // Firebase configuration - these will be set via environment variables
 const firebaseConfig = {
@@ -73,15 +74,45 @@ export const firebaseHelpers = {
     await set(dbRefs.currentUnitId(), unitId)
   },
 
-  // Get GM passkey
+  // Get GM passkey (returns hashed value)
   getPasskey: async () => {
     const snapshot = await get(dbRefs.gmPasskey())
     return snapshot.val()
   },
 
-  // Set GM passkey
+  // Set GM passkey (stores hashed value)
   setPasskey: async (passkey: string) => {
-    await set(dbRefs.gmPasskey(), passkey)
+    const hashedPasskey = await hashValue(passkey)
+    await set(dbRefs.gmPasskey(), hashedPasskey)
+  },
+
+  // Verify passkey without exposing the hash
+  verifyPasskey: async (inputPasskey: string): Promise<boolean> => {
+    const storedHash = await get(dbRefs.gmPasskey())
+    const storedValue = storedHash.val()
+    
+    if (!storedValue) {
+      // No passkey set yet - this is first-time setup
+      return false
+    }
+    
+    return await verifyHash(inputPasskey, storedValue)
+  },
+
+  // Check if stored passkey needs migration from plain text to hash
+  migratePasskeyIfNeeded: async (plainTextPasskey: string): Promise<void> => {
+    const storedValue = await get(dbRefs.gmPasskey())
+    const stored = storedValue.val()
+    
+    // If there's a stored value and it's not a valid SHA-256 hex hash (64 lowercase hex chars)
+    const isValidHash = stored && /^[a-f0-9]{64}$/.test(stored)
+    if (stored && !isValidHash) {
+      console.log('Migrating passkey to hashed format...')
+      // Re-hash and store
+      const hashedPasskey = await hashValue(plainTextPasskey)
+      await set(dbRefs.gmPasskey(), hashedPasskey)
+      console.log('Passkey migration complete')
+    }
   },
 
   // Initialize default data if database is empty
