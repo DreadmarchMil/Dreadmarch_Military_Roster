@@ -1,0 +1,4 @@
+# Require @DreadmarchMil review for core infra files
+/src/lib/firebase-adapter.ts @DreadmarchMil
+/src/lib/firebase.ts @DreadmarchMil
+/.github/workflows/ci.yml @DreadmarchMil
