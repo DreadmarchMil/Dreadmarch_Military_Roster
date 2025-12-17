@@ -105,12 +105,23 @@ function App() {
   }
   
   const getPersonnelForUnit = (unitId: string): Personnel[] => {
-    const currentUnitPersonnel = personnelByUnit?.[unitId] || []
-    const childUnitIds = getChildUnitIds(unitId)
-    const childPersonnel = childUnitIds.flatMap(childId => personnelByUnit?.[childId] || [])
+    // Get personnel directly assigned to this unit
+    const currentUnitPersonnel = (personnelByUnit?.[unitId] || []).filter(p => p.assignedUnit && p.assignedUnit.trim() !== '')
     
+    // Get personnel from child units
+    const childUnitIds = getChildUnitIds(unitId)
+    const childPersonnel = childUnitIds.flatMap(childId => 
+      (personnelByUnit?.[childId] || []).filter(p => p.assignedUnit && p.assignedUnit.trim() !== '')
+    )
+    
+    // Get the unit name for matching secondments
+    const currentUnitName = units?.find(u => u.id === unitId)?.name
     const allUnitsPersonnel = Object.values(personnelByUnit || {}).flat()
-    const secondedPersonnel = allUnitsPersonnel.filter(p => p.secondment === unitId)
+    const secondedPersonnel = currentUnitName 
+      ? allUnitsPersonnel.filter(p => 
+          p.secondment === currentUnitName && p.assignedUnit && p.assignedUnit.trim() !== ''
+        )
+      : []
     
     const allPersonnel = [...currentUnitPersonnel, ...childPersonnel, ...secondedPersonnel]
     const uniquePersonnel = Array.from(new Map(allPersonnel.map(p => [p.id, p])).values())
@@ -175,11 +186,19 @@ function App() {
     }
 
     if (filters.assignedUnits.length > 0) {
-      filtered = filtered.filter(p => filters.assignedUnits.includes(p.assignedUnit))
+      // Convert unit IDs to unit names for comparison
+      const assignedUnitNames = filters.assignedUnits
+        .map(unitId => units?.find(u => u.id === unitId)?.name)
+        .filter((name): name is string => name != null)
+      filtered = filtered.filter(p => assignedUnitNames.includes(p.assignedUnit))
     }
 
     if (filters.secondments.length > 0) {
-      filtered = filtered.filter(p => p.secondment && filters.secondments.includes(p.secondment))
+      // Convert unit IDs to unit names for comparison
+      const secondmentUnitNames = filters.secondments
+        .map(unitId => units?.find(u => u.id === unitId)?.name)
+        .filter((name): name is string => name != null)
+      filtered = filtered.filter(p => p.secondment && secondmentUnitNames.includes(p.secondment))
     }
 
     return sortPersonnelByRank(filtered)
