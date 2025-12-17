@@ -105,6 +105,22 @@ function App() {
   }
   
   const getPersonnelForUnit = (unitId: string): Personnel[] => {
+    // Special handling for the unassigned unit
+    if (unitId === 'unassigned') {
+      // Get all personnel from all units
+      const allUnitsPersonnel = Object.values(personnelByUnit || {}).flat()
+      
+      // Get all valid unit names
+      const validUnitNames = units?.map(u => u.name) || []
+      
+      // Return personnel with empty, null, or invalid assignedUnit
+      return allUnitsPersonnel.filter(p => 
+        !p.assignedUnit || 
+        p.assignedUnit.trim() === '' || 
+        !validUnitNames.includes(p.assignedUnit)
+      )
+    }
+    
     // Get personnel directly assigned to this unit
     const currentUnitPersonnel = (personnelByUnit?.[unitId] || []).filter(p => p.assignedUnit && p.assignedUnit.trim() !== '')
     
@@ -445,6 +461,7 @@ function App() {
               units={units || DEFAULT_UNITS}
               currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
               onUnitChange={setCurrentUnitId}
+              isGM={isGM}
             />
             <div className="flex items-center gap-3">
               {isGM && (

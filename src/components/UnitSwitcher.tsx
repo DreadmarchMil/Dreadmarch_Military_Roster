@@ -6,9 +6,10 @@ interface UnitSwitcherProps {
   units: Unit[]
   currentUnitId: string
   onUnitChange: (unitId: string) => void
+  isGM?: boolean
 }
 
-export function UnitSwitcher({ units, currentUnitId, onUnitChange }: UnitSwitcherProps) {
+export function UnitSwitcher({ units, currentUnitId, onUnitChange, isGM = false }: UnitSwitcherProps) {
   const currentUnit = units?.find(u => u.id === currentUnitId)
 
   const getUnitDepth = (unitId: string): number => {
@@ -17,7 +18,9 @@ export function UnitSwitcher({ units, currentUnitId, onUnitChange }: UnitSwitche
     return 1 + getUnitDepth(unit.parentId)
   }
 
-  const sortedUnits = units ? sortUnits(units) : []
+  // Filter out unassigned unit when not in GM mode
+  const filteredUnits = isGM ? units : units?.filter(u => u.id !== 'unassigned')
+  const sortedUnits = filteredUnits ? sortUnits(filteredUnits) : []
 
   return (
     <Select value={currentUnitId} onValueChange={onUnitChange}>

@@ -35,5 +35,6 @@ export const DEFAULT_UNITS: Unit[] = [
   { id: 'iss-beaumont', name: 'I.S.S. Beaumont Hill', parentId: '17th-assault' },
   { id: 'dagger-squadron', name: 'Dagger Squadron', parentId: 'iss-beaumont' },
   { id: 'warrior-cadre', name: 'Warrior Cadre', parentId: '17th-assault' },
-  { id: 'imperial-auxiliary', name: 'Imperial Auxiliary', parentId: '17th-assault' }
+  { id: 'imperial-auxiliary', name: 'Imperial Auxiliary', parentId: '17th-assault' },
+  { id: 'unassigned', name: 'Unassigned Personnel Pool' }
 ]

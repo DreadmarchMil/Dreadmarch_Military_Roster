@@ -16,7 +16,8 @@ const UNIT_ORDER = [
   'iss-beaumont',
   'dagger-squadron',
   'warrior-cadre',
-  'imperial-auxiliary'
+  'imperial-auxiliary',
+  'unassigned'
 ]
 
 export function sortUnits(units: Unit[]): Unit[] {
