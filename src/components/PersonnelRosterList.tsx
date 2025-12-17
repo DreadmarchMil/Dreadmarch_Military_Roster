@@ -12,9 +12,10 @@ interface PersonnelRosterListProps {
   onRowClick: (personnel: Personnel) => void
   onStatusChange?: (id: string, status: Personnel['status']) => void
   isGM?: boolean
+  currentUnitId?: string
 }
 
-export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isGM }: PersonnelRosterListProps) {
+export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isGM, currentUnitId }: PersonnelRosterListProps) {
   const [sortField, setSortField] = useState<SortField | null>('rank')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
@@ -112,7 +113,7 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
 
   return (
     <div className="border border-border bg-card text-xs">
-      <div className="grid grid-cols-[2fr_1.2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 bg-primary/10 border-b-2 border-primary/30 text-[0.65rem] font-bold uppercase tracking-wider text-primary">
+      <div className="grid grid-cols-[2fr_1.2fr_1.2fr_1.2fr_1.2fr_1.8fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 bg-primary/10 border-b-2 border-primary/30 text-[0.65rem] font-bold uppercase tracking-wider text-primary">
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('name')}>
           Name<SortIcon field="name" />
         </div>
@@ -125,14 +126,14 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('role')}>
           Role<SortIcon field="role" />
         </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('specialty')}>
+          Specialty<SortIcon field="specialty" />
+        </div>
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('assignedUnit')}>
           Assigned Unit<SortIcon field="assignedUnit" />
         </div>
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('secondment')}>
           Secondment<SortIcon field="secondment" />
-        </div>
-        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('specialty')}>
-          Specialty<SortIcon field="specialty" />
         </div>
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('status')}>
           Status<SortIcon field="status" />
@@ -146,13 +147,16 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         {sortedPersonnel.map((person) => (
           <div
             key={person.id}
-            className="grid grid-cols-[2fr_1.2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 hover:bg-primary/5 transition-colors group items-center"
+            className="grid grid-cols-[2fr_1.2fr_1.2fr_1.2fr_1.2fr_1.8fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 hover:bg-primary/5 transition-colors group items-center"
           >
             <div 
-              className="font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer"
+              className="font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer flex items-center gap-2"
               onClick={() => onRowClick(person)}
             >
               {person.name}
+              {currentUnitId && person.secondment === currentUnitId && (
+                <Badge className="h-4 px-1 text-[0.6rem] bg-accent/20 text-accent border-accent/50">TDY</Badge>
+              )}
             </div>
             <div 
               className="text-accent cursor-pointer"
@@ -176,6 +180,12 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
               className="text-foreground cursor-pointer"
               onClick={() => onRowClick(person)}
             >
+              {person.specialty || '—'}
+            </div>
+            <div 
+              className="text-foreground cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
               {person.assignedUnit || '—'}
             </div>
             <div 
@@ -183,12 +193,6 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
               onClick={() => onRowClick(person)}
             >
               {person.secondment || '—'}
-            </div>
-            <div 
-              className="text-foreground cursor-pointer"
-              onClick={() => onRowClick(person)}
-            >
-              {person.specialty || '—'}
             </div>
             <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
               {isGM && onStatusChange ? (

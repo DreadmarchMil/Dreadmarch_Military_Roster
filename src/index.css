@@ -75,6 +75,32 @@ body {
   font-family: var(--font-mono);
 }
 
+/* Custom scrollbar styling for filter window - Sith Empire theme */
+/* Webkit browsers (Chrome, Safari, Edge) */
+.filter-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-track {
+  background: oklch(0.15 0.01 25);
+  border-radius: 2px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-thumb {
+  background: oklch(0.45 0.22 25);
+  border-radius: 2px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.55 0.25 25);
+}
+
+/* Firefox */
+.filter-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.45 0.22 25) oklch(0.15 0.01 25);
+}
+
 @keyframes gradient {
   0%, 100% {
     background-position: 0% 50%;
