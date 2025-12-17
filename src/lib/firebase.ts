@@ -35,10 +35,12 @@ export const firebaseHelpers = {
     }
   },
 
-  subscribeToCurrentUnitId: (callback: (unitId: string) => void) => {
+  subscribeToCurrentUnitId: (callback: (unitId: string) => void, defaultValue?: string) => {
     let unsub: (() => void) | null = null
     let cancelled = false
-    subscribe(dbRefs.currentUnitId(), (val) => { if (val) callback(val) }).then(fn => { 
+    subscribe(dbRefs.currentUnitId(), (val) => { 
+      callback(val || defaultValue || '')
+    }).then(fn => { 
       if (!cancelled) unsub = fn 
     })
     return () => { 
