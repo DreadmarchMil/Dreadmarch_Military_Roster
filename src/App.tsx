@@ -14,6 +14,7 @@ import { UnitSwitcher } from '@/components/UnitSwitcher'
 import { PersonnelSearch, type SearchFilters } from '@/components/PersonnelSearch'
 import { ImportExportDialog } from '@/components/ImportExportDialog'
 import { BootScreen } from '@/components/BootScreen'
+import { LoadingScreen } from '@/components/LoadingScreen'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
 import { DEFAULT_UNITS } from '@/lib/types'
@@ -418,8 +419,14 @@ function App() {
 
   const deletingPersonnel = allPersonnel?.find(p => p.id === deletingId)
 
-  if (!bootComplete || unitsLoading || unitIdLoading || personnelLoading) {
+  // Show boot screen only if boot is not complete (regardless of loading state)
+  if (!bootComplete) {
     return <BootScreen onComplete={() => setBootComplete(true)} />
+  }
+
+  // After boot is complete, show loading state if data is still loading
+  if (unitsLoading || unitIdLoading || personnelLoading) {
+    return <LoadingScreen />
   }
 
   return (
