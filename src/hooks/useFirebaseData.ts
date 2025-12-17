@@ -84,7 +84,7 @@ export function useFirebaseCurrentUnit(defaultUnitId: string) {
     }, 10000)
 
     const unsubscribe = firebaseHelpers.subscribeToCurrentUnitId((unitId) => {
-      setCurrentUnitIdState(unitId || defaultUnitId)
+      setCurrentUnitIdState(unitId)
       setLoading(false)
       clearTimeout(timeout)
     }, defaultUnitId)
@@ -93,7 +93,10 @@ export function useFirebaseCurrentUnit(defaultUnitId: string) {
       unsubscribe()
       clearTimeout(timeout)
     }
-  }, [defaultUnitId])
+    // defaultUnitId is intentionally omitted from deps to avoid unnecessary re-subscriptions
+    // It comes from DEFAULT_UNITS[0].id which is a constant that never changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const setCurrentUnitId = async (unitId: string) => {
     setCurrentUnitIdState(unitId)
