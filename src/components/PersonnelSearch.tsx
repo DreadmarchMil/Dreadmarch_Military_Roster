@@ -199,7 +199,7 @@ export function PersonnelSearch({
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
               <div>
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
                   Character Type
