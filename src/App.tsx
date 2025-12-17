@@ -14,10 +14,12 @@ import { UnitSwitcher } from '@/components/UnitSwitcher'
 import { PersonnelSearch, type SearchFilters } from '@/components/PersonnelSearch'
 import { ImportExportDialog } from '@/components/ImportExportDialog'
 import { BootScreen } from '@/components/BootScreen'
+import { ConnectionStatus } from '@/components/ConnectionStatus'
 import type { Personnel, PersonnelFormData, UserRole, Unit } from '@/lib/types'
 import { DEFAULT_UNITS } from '@/lib/types'
 import type { ExportData } from '@/lib/import-export'
 import { sortPersonnelByRank } from '@/lib/utils'
+import { isEnabled as isFirebaseEnabled } from '@/lib/firebase-adapter'
 
 function App() {
   const [bootComplete, setBootComplete] = useState(false)
@@ -464,6 +466,7 @@ function App() {
               isGM={isGM}
             />
             <div className="flex items-center gap-3">
+              {isGM && <ConnectionStatus isConnected={isFirebaseEnabled} />}
               {isGM && (
                 <Button
                   onClick={handleOpenImportExport}
