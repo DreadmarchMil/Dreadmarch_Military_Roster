@@ -13,20 +13,38 @@ export const dbRefs = {
 export const firebaseHelpers = {
   subscribeToPersonnel: (callback: (data: Record<string, Personnel[]>) => void) => {
     let unsub: (() => void) | null = null
-    subscribe(dbRefs.personnelByUnit(), (val) => callback(val || {})).then(fn => { unsub = fn })
-    return () => { if (unsub) unsub() }
+    let cancelled = false
+    subscribe(dbRefs.personnelByUnit(), (val) => callback(val || {})).then(fn => { 
+      if (!cancelled) unsub = fn 
+    })
+    return () => { 
+      cancelled = true
+      if (unsub) unsub() 
+    }
   },
 
   subscribeToUnits: (callback: (data: Unit[]) => void) => {
     let unsub: (() => void) | null = null
-    subscribe(dbRefs.units(), (val) => callback((val && Array.isArray(val)) ? val : [])).then(fn => { unsub = fn })
-    return () => { if (unsub) unsub() }
+    let cancelled = false
+    subscribe(dbRefs.units(), (val) => callback((val && Array.isArray(val)) ? val : [])).then(fn => { 
+      if (!cancelled) unsub = fn 
+    })
+    return () => { 
+      cancelled = true
+      if (unsub) unsub() 
+    }
   },
 
   subscribeToCurrentUnitId: (callback: (unitId: string) => void) => {
     let unsub: (() => void) | null = null
-    subscribe(dbRefs.currentUnitId(), (val) => { if (val) callback(val) }).then(fn => { unsub = fn })
-    return () => { if (unsub) unsub() }
+    let cancelled = false
+    subscribe(dbRefs.currentUnitId(), (val) => { if (val) callback(val) }).then(fn => { 
+      if (!cancelled) unsub = fn 
+    })
+    return () => { 
+      cancelled = true
+      if (unsub) unsub() 
+    }
   },
 
   updatePersonnel: async (data: Record<string, Personnel[]>) => {

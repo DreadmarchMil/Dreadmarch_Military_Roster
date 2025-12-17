@@ -122,16 +122,9 @@ export async function subscribe(path: string, cb: (value: any) => void): Promise
   }
   const dbRef = impl.ref(impl.db, path)
   const handler = (snap: any) => cb(snap.val())
-  impl.onValue(dbRef, handler)
-  // Return a best-effort unsubscribe wrapper
-  return () => {
-    try {
-      // onValue returns an unsubscribe function only in modular SDK patterns; this is a minimal wrapper
-      // If the environment supports off(), add the proper cleanup here.
-    } catch {
-      // Best-effort cleanup; silent fail on unsubscribe errors
-    }
-  }
+  const unsubscribe = impl.onValue(dbRef, handler)
+  // Return the Firebase unsubscribe function
+  return unsubscribe
 }
 
 export function clearMock() {
