@@ -49,6 +49,37 @@ npm run dev
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
+## 🔐 Environment Configuration
+
+### Local Development
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Get your Firebase configuration:
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Select your project: `dreadmarch-military-rost-88c4e`
+   - Go to Project Settings → Your apps → Web app
+   - Copy the configuration values
+
+3. Fill in `.env.local` with your Firebase config values
+
+4. **Never commit `.env.local` to git!** It's already in `.gitignore`.
+
+### Deployment
+
+For GitHub Pages deployment, see [DEPLOYMENT_SECRETS.md](DEPLOYMENT_SECRETS.md) for instructions on setting up repository secrets.
+
+### Security
+
+⚠️ If Firebase credentials are ever exposed publicly:
+1. Go to Firebase Console → Project Settings
+2. Rotate your API keys
+3. Update your secrets in GitHub and `.env.local`
+4. Redeploy the application
+
 ## 🔥 Firebase Setup
 
 This application uses Firebase Realtime Database for multi-GM collaboration. Follow these steps to set up your own Firebase instance:
