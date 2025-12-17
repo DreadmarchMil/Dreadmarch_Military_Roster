@@ -2,17 +2,29 @@ import { useEffect, useState } from 'react'
 import { firebaseHelpers } from '@/lib/firebase'
 import type { Personnel, Unit } from '@/lib/types'
 
+// Timeout duration for Firebase subscription fallback (in milliseconds)
+const FIREBASE_TIMEOUT_MS = 10000
+
 export function useFirebasePersonnel() {
   const [personnelByUnit, setPersonnelByUnit] = useState<Record<string, Personnel[]>>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Timeout fallback - don't hang forever
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, FIREBASE_TIMEOUT_MS)
+
     const unsubscribe = firebaseHelpers.subscribeToPersonnel((data) => {
       setPersonnelByUnit(data)
       setLoading(false)
+      clearTimeout(timeout)
     })
 
-    return () => unsubscribe()
+    return () => {
+      unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [])
 
   const updatePersonnel = async (data: Record<string, Personnel[]>) => {
@@ -35,12 +47,21 @@ export function useFirebaseUnits(defaultUnits: Unit[]) {
     // Initialize defaults if needed
     firebaseHelpers.initializeDefaults(defaultUnits)
 
+    // Timeout fallback - don't hang forever
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, FIREBASE_TIMEOUT_MS)
+
     const unsubscribe = firebaseHelpers.subscribeToUnits((data) => {
       setUnits(data.length > 0 ? data : defaultUnits)
       setLoading(false)
+      clearTimeout(timeout)
     })
 
-    return () => unsubscribe()
+    return () => {
+      unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [defaultUnits])
 
   const updateUnits = async (data: Unit[]) => {
@@ -60,13 +81,22 @@ export function useFirebaseCurrentUnit(defaultUnitId: string) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Timeout fallback - don't hang forever
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, FIREBASE_TIMEOUT_MS)
+
     const unsubscribe = firebaseHelpers.subscribeToCurrentUnitId((unitId) => {
       setCurrentUnitIdState(unitId)
       setLoading(false)
-    })
+      clearTimeout(timeout)
+    }, defaultUnitId)
 
-    return () => unsubscribe()
-  }, [])
+    return () => {
+      unsubscribe()
+      clearTimeout(timeout)
+    }
+  }, [defaultUnitId])
 
   const setCurrentUnitId = async (unitId: string) => {
     setCurrentUnitIdState(unitId)
