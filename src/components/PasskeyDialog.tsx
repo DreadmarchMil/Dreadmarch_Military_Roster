@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { firebaseHelpers } from '@/lib/firebase'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,7 +13,7 @@ interface PasskeyDialogProps {
 }
 
 export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogProps) {
-  const [storedPasskey, setStoredPasskey] = useKV<string>('gm-passkey', '')
+  const [storedPasskey, setStoredPasskey] = useState('')
   const [inputPasskey, setInputPasskey] = useState('')
   const [confirmPasskey, setConfirmPasskey] = useState('')
   const [error, setError] = useState('')
@@ -21,6 +21,14 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
   const [showConfirm, setShowConfirm] = useState(false)
 
   const isFirstTime = !storedPasskey
+
+  useEffect(() => {
+    firebaseHelpers.getPasskey().then(passkey => {
+      if (passkey) setStoredPasskey(passkey)
+    }).catch(error => {
+      console.error('Failed to fetch passkey from Firebase:', error)
+    })
+  }, [])
 
   useEffect(() => {
     if (!open) {
@@ -45,9 +53,14 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
         setError('Passkeys do not match')
         return
       }
-      setStoredPasskey(inputPasskey)
-      onSuccess()
-      onOpenChange(false)
+      firebaseHelpers.setPasskey(inputPasskey).then(() => {
+        setStoredPasskey(inputPasskey)
+        onSuccess()
+        onOpenChange(false)
+      }).catch(error => {
+        console.error('Failed to set passkey in Firebase:', error)
+        setError('Failed to save passkey. Please try again.')
+      })
     } else {
       if (inputPasskey === storedPasskey) {
         onSuccess()

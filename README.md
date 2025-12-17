@@ -49,6 +49,71 @@ npm run dev
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
+## 🔥 Firebase Setup
+
+This application uses Firebase Realtime Database for multi-GM collaboration. Follow these steps to set up your own Firebase instance:
+
+### 1. Create a Firebase Project
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Click "Add project"
+3. Enter project name: `dreadmarch-military-roster`
+4. Follow the setup wizard
+
+### 2. Enable Realtime Database
+
+1. In your Firebase project, go to "Build" → "Realtime Database"
+2. Click "Create Database"
+3. Choose a location close to your users
+4. Start in **test mode** for development (secure it later)
+
+### 3. Get Firebase Configuration
+
+1. Go to Project Settings (gear icon)
+2. Scroll down to "Your apps"
+3. Click the web icon (`</>`)
+4. Register your app
+5. Copy the `firebaseConfig` values
+
+### 4. Configure Environment Variables
+
+1. Copy `.env.example` to `.env.local`
+2. Fill in your Firebase configuration values
+3. Never commit `.env.local` to git
+
+### 5. Deploy with Environment Variables
+
+For GitHub Pages deployment, add your Firebase config as repository secrets:
+
+1. Go to your repository → Settings → Secrets and variables → Actions
+2. Add each environment variable as a secret:
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_DATABASE_URL`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+
+### 6. Update GitHub Actions Workflow
+
+The deploy workflow will automatically use these secrets to build with Firebase configuration.
+
+### Security Rules (Important!)
+
+Once you're ready for production, update your Firebase Realtime Database rules:
+
+```json
+{
+  "rules": {
+    ".read": true,
+    ".write": "auth != null"
+  }
+}
+```
+
+For a more secure setup with GM authentication, consider implementing Firebase Authentication.
+
 ## 🎨 Design Philosophy
 
 The interface evokes the cold, calculated aesthetic of Sith Empire technology with:
