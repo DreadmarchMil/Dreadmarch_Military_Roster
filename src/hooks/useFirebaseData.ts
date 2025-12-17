@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { firebaseHelpers } from '@/lib/firebase'
 import type { Personnel, Unit } from '@/lib/types'
 
+// Timeout duration for Firebase subscription fallback (in milliseconds)
+const FIREBASE_TIMEOUT_MS = 10000
+
 export function useFirebasePersonnel() {
   const [personnelByUnit, setPersonnelByUnit] = useState<Record<string, Personnel[]>>({})
   const [loading, setLoading] = useState(true)
@@ -10,7 +13,7 @@ export function useFirebasePersonnel() {
     // Timeout fallback - don't hang forever
     const timeout = setTimeout(() => {
       setLoading(false)
-    }, 10000)
+    }, FIREBASE_TIMEOUT_MS)
 
     const unsubscribe = firebaseHelpers.subscribeToPersonnel((data) => {
       setPersonnelByUnit(data)
@@ -47,7 +50,7 @@ export function useFirebaseUnits(defaultUnits: Unit[]) {
     // Timeout fallback - don't hang forever
     const timeout = setTimeout(() => {
       setLoading(false)
-    }, 10000)
+    }, FIREBASE_TIMEOUT_MS)
 
     const unsubscribe = firebaseHelpers.subscribeToUnits((data) => {
       setUnits(data.length > 0 ? data : defaultUnits)
@@ -81,7 +84,7 @@ export function useFirebaseCurrentUnit(defaultUnitId: string) {
     // Timeout fallback - don't hang forever
     const timeout = setTimeout(() => {
       setLoading(false)
-    }, 10000)
+    }, FIREBASE_TIMEOUT_MS)
 
     const unsubscribe = firebaseHelpers.subscribeToCurrentUnitId((unitId) => {
       setCurrentUnitIdState(unitId)
@@ -93,10 +96,7 @@ export function useFirebaseCurrentUnit(defaultUnitId: string) {
       unsubscribe()
       clearTimeout(timeout)
     }
-    // defaultUnitId is intentionally omitted from deps to avoid unnecessary re-subscriptions
-    // It comes from DEFAULT_UNITS[0].id which is a constant that never changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [defaultUnitId])
 
   const setCurrentUnitId = async (unitId: string) => {
     setCurrentUnitIdState(unitId)
