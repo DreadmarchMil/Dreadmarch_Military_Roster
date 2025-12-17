@@ -12,15 +12,15 @@ export function ConnectionStatus({ isConnected }: ConnectionStatusProps) {
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-primary/30 bg-card/80 text-xs font-semibold uppercase tracking-wide">
           {isConnected ? (
             <>
-              <div className="size-2 rounded-full bg-green-500 animate-pulse" />
-              <WifiHigh size={16} className="text-green-500" />
-              <span className="hidden sm:inline text-green-500">Connected</span>
+              <div className="size-2 rounded-full bg-[oklch(0.65_0.20_145)] animate-pulse" />
+              <WifiHigh size={16} className="text-[oklch(0.65_0.20_145)]" />
+              <span className="hidden sm:inline text-[oklch(0.65_0.20_145)]">Connected</span>
             </>
           ) : (
             <>
-              <div className="size-2 rounded-full bg-yellow-500 animate-pulse" />
-              <WifiSlash size={16} className="text-yellow-500" />
-              <span className="hidden sm:inline text-yellow-500">Local Only</span>
+              <div className="size-2 rounded-full bg-accent animate-pulse" />
+              <WifiSlash size={16} className="text-accent" />
+              <span className="hidden sm:inline text-accent">Local Only</span>
             </>
           )}
         </div>
