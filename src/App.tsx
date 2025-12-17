@@ -41,8 +41,6 @@ function App() {
     rankCategories: [],
     specialties: [],
     characterTypes: [],
-    assignedUnits: [],
-    secondments: [],
     showInactive: false,
   })
 
@@ -201,22 +199,6 @@ function App() {
 
     if (filters.characterTypes.length > 0) {
       filtered = filtered.filter(p => filters.characterTypes.includes(p.characterType))
-    }
-
-    if (filters.assignedUnits.length > 0) {
-      // Convert unit IDs to unit names for comparison
-      const assignedUnitNames = filters.assignedUnits
-        .map(unitId => units?.find(u => u.id === unitId)?.name)
-        .filter((name): name is string => name != null)
-      filtered = filtered.filter(p => assignedUnitNames.includes(p.assignedUnit))
-    }
-
-    if (filters.secondments.length > 0) {
-      // Convert unit IDs to unit names for comparison
-      const secondmentUnitNames = filters.secondments
-        .map(unitId => units?.find(u => u.id === unitId)?.name)
-        .filter((name): name is string => name != null)
-      filtered = filtered.filter(p => p.secondment && secondmentUnitNames.includes(p.secondment))
     }
 
     return sortPersonnelByRank(filtered)
@@ -520,14 +502,13 @@ function App() {
               filters={filters}
               onFiltersChange={setFilters}
               availableSpecialties={availableSpecialties}
-              availableUnits={units || DEFAULT_UNITS}
             />
             {filteredPersonnel.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">No personnel match your search criteria</p>
                 <Button
                   variant="outline"
-                  onClick={() => setFilters({ searchQuery: '', statuses: [], rankCategories: [], specialties: [], characterTypes: [], assignedUnits: [], secondments: [], showInactive: false })}
+                  onClick={() => setFilters({ searchQuery: '', statuses: [], rankCategories: [], specialties: [], characterTypes: [], showInactive: false })}
                   className="mt-4 border-primary/30 hover:bg-primary/10"
                 >
                   Clear Filters

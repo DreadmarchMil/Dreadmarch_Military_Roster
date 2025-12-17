@@ -52,15 +52,36 @@ export function validateImportData(data: any): ImportResult {
     return { success: false, error: 'Missing or invalid units data' }
   }
 
+  // Migrate and validate personnel records with default values
   for (const unitId in data.personnelByUnit) {
     const personnel = data.personnelByUnit[unitId]
     if (!Array.isArray(personnel)) {
       return { success: false, error: `Invalid personnel data for unit ${unitId}` }
     }
 
-    for (const person of personnel) {
-      if (!person.id || !person.name || !person.callsign || !person.rank) {
-        return { success: false, error: 'Personnel record missing required fields' }
+    for (let i = 0; i < personnel.length; i++) {
+      const person = personnel[i]
+      
+      // Only require essential fields
+      if (!person.id || !person.name) {
+        return { success: false, error: 'Personnel record missing required fields (id, name)' }
+      }
+
+      // Auto-fill missing fields with sensible defaults
+      personnel[i] = {
+        ...person,
+        characterType: person.characterType || 'pc',
+        status: person.status || 'available',
+        gender: person.gender ?? '',
+        grade: person.grade ?? '',
+        secondment: person.secondment ?? '',
+        callsign: person.callsign ?? '',
+        role: person.role ?? '',
+        specialty: person.specialty ?? '',
+        species: person.species ?? '',
+        notes: person.notes ?? '',
+        rank: person.rank ?? '',
+        assignedUnit: person.assignedUnit ?? ''
       }
     }
   }
