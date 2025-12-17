@@ -199,7 +199,7 @@ export function PersonnelSearch({
               </div>
             </div>
 
-            <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-2 filter-scrollbar">
               <div>
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
                   Character Type
@@ -274,7 +274,7 @@ export function PersonnelSearch({
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
                     Specialty
                   </Label>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                  <div className="space-y-2 max-h-40 overflow-y-auto filter-scrollbar">
                     {availableSpecialties.map((specialty) => (
                       <div key={specialty} className="flex items-center space-x-2">
                         <Checkbox
@@ -299,7 +299,7 @@ export function PersonnelSearch({
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
                     Assigned Unit
                   </Label>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                  <div className="space-y-2 max-h-40 overflow-y-auto filter-scrollbar">
                     {availableUnits.map((unit) => (
                       <div key={unit.id} className="flex items-center space-x-2">
                         <Checkbox
@@ -324,7 +324,7 @@ export function PersonnelSearch({
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
                     Secondment
                   </Label>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                  <div className="space-y-2 max-h-40 overflow-y-auto filter-scrollbar">
                     {availableUnits.map((unit) => (
                       <div key={unit.id} className="flex items-center space-x-2">
                         <Checkbox
