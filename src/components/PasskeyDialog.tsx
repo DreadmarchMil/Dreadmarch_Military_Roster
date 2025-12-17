@@ -19,7 +19,6 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
   const [showPasskey, setShowPasskey] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [isFirstTime, setIsFirstTime] = useState(true)
-  const [checkingPasskey, setCheckingPasskey] = useState(true)
 
   useEffect(() => {
     async function checkForExistingPasskey() {
@@ -29,8 +28,6 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
       } catch (error) {
         console.error('Error checking for existing passkey:', error)
         setIsFirstTime(true)
-      } finally {
-        setCheckingPasskey(false)
       }
     }
     

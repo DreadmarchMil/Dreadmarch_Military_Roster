@@ -104,8 +104,9 @@ export const firebaseHelpers = {
     const storedValue = await get(dbRefs.gmPasskey())
     const stored = storedValue.val()
     
-    // If there's a stored value and it's not a valid hex hash (64 chars for SHA-256)
-    if (stored && stored.length !== 64) {
+    // If there's a stored value and it's not a valid SHA-256 hex hash (64 hex chars)
+    const isValidHash = stored && /^[a-f0-9]{64}$/i.test(stored)
+    if (stored && !isValidHash) {
       console.log('Migrating passkey to hashed format...')
       // Re-hash and store
       const hashedPasskey = await hashValue(plainTextPasskey)
