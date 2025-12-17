@@ -189,7 +189,7 @@ function App() {
       // Convert unit IDs to unit names for comparison
       const assignedUnitNames = filters.assignedUnits
         .map(unitId => units?.find(u => u.id === unitId)?.name)
-        .filter(Boolean) as string[]
+        .filter((name): name is string => name != null)
       filtered = filtered.filter(p => assignedUnitNames.includes(p.assignedUnit))
     }
 
@@ -197,7 +197,7 @@ function App() {
       // Convert unit IDs to unit names for comparison
       const secondmentUnitNames = filters.secondments
         .map(unitId => units?.find(u => u.id === unitId)?.name)
-        .filter(Boolean) as string[]
+        .filter((name): name is string => name != null)
       filtered = filtered.filter(p => p.secondment && secondmentUnitNames.includes(p.secondment))
     }
 
