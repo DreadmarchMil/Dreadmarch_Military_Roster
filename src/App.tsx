@@ -186,11 +186,19 @@ function App() {
     }
 
     if (filters.assignedUnits.length > 0) {
-      filtered = filtered.filter(p => filters.assignedUnits.includes(p.assignedUnit))
+      // Convert unit IDs to unit names for comparison
+      const assignedUnitNames = filters.assignedUnits
+        .map(unitId => units?.find(u => u.id === unitId)?.name)
+        .filter(Boolean) as string[]
+      filtered = filtered.filter(p => assignedUnitNames.includes(p.assignedUnit))
     }
 
     if (filters.secondments.length > 0) {
-      filtered = filtered.filter(p => p.secondment && filters.secondments.includes(p.secondment))
+      // Convert unit IDs to unit names for comparison
+      const secondmentUnitNames = filters.secondments
+        .map(unitId => units?.find(u => u.id === unitId)?.name)
+        .filter(Boolean) as string[]
+      filtered = filtered.filter(p => p.secondment && secondmentUnitNames.includes(p.secondment))
     }
 
     return sortPersonnelByRank(filtered)
