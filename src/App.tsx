@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { useFirebasePersonnel, useFirebaseUnits, useFirebaseCurrentUnit } from '@/hooks/useFirebaseData'
 import { Plus, UserGear, User, Database } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
@@ -26,7 +26,7 @@ function App() {
   const { units, updateUnits, loading: unitsLoading } = useFirebaseUnits(DEFAULT_UNITS)
   const { currentUnitId, setCurrentUnitId, loading: unitIdLoading } = useFirebaseCurrentUnit(DEFAULT_UNITS[0].id)
   const { personnelByUnit, updatePersonnel, loading: personnelLoading } = useFirebasePersonnel()
-  const [userRole, setUserRole] = useKV<UserRole>('user-role', 'player')
+  const [userRole, setUserRole] = useLocalStorage<UserRole>('user-role', 'player')
   const [formOpen, setFormOpen] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
