@@ -25,6 +25,8 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
   useEffect(() => {
     firebaseHelpers.getPasskey().then(passkey => {
       if (passkey) setStoredPasskey(passkey)
+    }).catch(error => {
+      console.error('Failed to fetch passkey from Firebase:', error)
     })
   }, [])
 
@@ -55,6 +57,9 @@ export function PasskeyDialog({ open, onOpenChange, onSuccess }: PasskeyDialogPr
         setStoredPasskey(inputPasskey)
         onSuccess()
         onOpenChange(false)
+      }).catch(error => {
+        console.error('Failed to set passkey in Firebase:', error)
+        setError('Failed to save passkey. Please try again.')
       })
     } else {
       if (inputPasskey === storedPasskey) {

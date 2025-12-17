@@ -13,6 +13,13 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 }
 
+// Validate Firebase configuration
+const requiredEnvVars = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_DATABASE_URL', 'VITE_FIREBASE_PROJECT_ID']
+const missingVars = requiredEnvVars.filter(key => !import.meta.env[key])
+if (missingVars.length > 0) {
+  console.error('Missing required Firebase environment variables:', missingVars)
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 const database = getDatabase(app)
@@ -79,11 +86,19 @@ export const firebaseHelpers = {
 
   // Initialize default data if database is empty
   initializeDefaults: async (defaultUnits: Unit[]) => {
-    const unitsSnapshot = await get(dbRefs.units())
-    if (!unitsSnapshot.exists()) {
-      await set(dbRefs.units(), defaultUnits)
-      await set(dbRefs.currentUnitId(), defaultUnits[0].id)
-      await set(dbRefs.personnelByUnit(), {})
+    if (!defaultUnits || defaultUnits.length === 0) {
+      console.error('Cannot initialize Firebase: defaultUnits is empty')
+      return
+    }
+    try {
+      const unitsSnapshot = await get(dbRefs.units())
+      if (!unitsSnapshot.exists()) {
+        await set(dbRefs.units(), defaultUnits)
+        await set(dbRefs.currentUnitId(), defaultUnits[0].id)
+        await set(dbRefs.personnelByUnit(), {})
+      }
+    } catch (error) {
+      console.error('Failed to initialize Firebase defaults:', error)
     }
   }
 }

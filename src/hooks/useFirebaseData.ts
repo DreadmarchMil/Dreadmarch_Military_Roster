@@ -16,7 +16,12 @@ export function useFirebasePersonnel() {
   }, [])
 
   const updatePersonnel = async (data: Record<string, Personnel[]>) => {
-    await firebaseHelpers.updatePersonnel(data)
+    try {
+      await firebaseHelpers.updatePersonnel(data)
+    } catch (error) {
+      console.error('Failed to update personnel:', error)
+      throw error
+    }
   }
 
   return { personnelByUnit, updatePersonnel, loading }
@@ -36,10 +41,15 @@ export function useFirebaseUnits(defaultUnits: Unit[]) {
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [defaultUnits])
 
   const updateUnits = async (data: Unit[]) => {
-    await firebaseHelpers.updateUnits(data)
+    try {
+      await firebaseHelpers.updateUnits(data)
+    } catch (error) {
+      console.error('Failed to update units:', error)
+      throw error
+    }
   }
 
   return { units, updateUnits, loading }
@@ -60,7 +70,12 @@ export function useFirebaseCurrentUnit(defaultUnitId: string) {
 
   const setCurrentUnitId = async (unitId: string) => {
     setCurrentUnitIdState(unitId)
-    await firebaseHelpers.updateCurrentUnitId(unitId)
+    try {
+      await firebaseHelpers.updateCurrentUnitId(unitId)
+    } catch (error) {
+      console.error('Failed to update current unit ID:', error)
+      throw error
+    }
   }
 
   return { currentUnitId, setCurrentUnitId, loading }
