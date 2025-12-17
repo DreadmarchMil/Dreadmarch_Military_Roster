@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CaretUp, CaretDown } from '@phosphor-icons/react'
 import type { Personnel } from '@/lib/types'
 
-type SortField = 'name' | 'callsign' | 'rank' | 'assignedUnit' | 'secondment' | 'specialty' | 'status' | 'characterType'
+type SortField = 'name' | 'callsign' | 'rank' | 'role' | 'assignedUnit' | 'secondment' | 'specialty' | 'status' | 'characterType'
 type SortDirection = 'asc' | 'desc'
 
 interface PersonnelRosterListProps {
@@ -71,6 +71,10 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         aValue = a.specialty.toLowerCase()
         bValue = b.specialty.toLowerCase()
         break
+      case 'role':
+        aValue = a.role.toLowerCase()
+        bValue = b.role.toLowerCase()
+        break
       case 'status':
         aValue = a.status
         bValue = b.status
@@ -108,7 +112,7 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
 
   return (
     <div className="border border-border bg-card text-xs">
-      <div className="grid grid-cols-[2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 bg-primary/10 border-b-2 border-primary/30 text-[0.65rem] font-bold uppercase tracking-wider text-primary">
+      <div className="grid grid-cols-[2fr_1.2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 bg-primary/10 border-b-2 border-primary/30 text-[0.65rem] font-bold uppercase tracking-wider text-primary">
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('name')}>
           Name<SortIcon field="name" />
         </div>
@@ -117,6 +121,9 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         </div>
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('rank')}>
           Rank<SortIcon field="rank" />
+        </div>
+        <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('role')}>
+          Role<SortIcon field="role" />
         </div>
         <div className="cursor-pointer hover:text-accent transition-colors" onClick={() => handleSort('assignedUnit')}>
           Assigned Unit<SortIcon field="assignedUnit" />
@@ -139,7 +146,7 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
         {sortedPersonnel.map((person) => (
           <div
             key={person.id}
-            className="grid grid-cols-[2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 hover:bg-primary/5 transition-colors group items-center"
+            className="grid grid-cols-[2fr_1.2fr_1.2fr_1.2fr_1.8fr_1.2fr_1.2fr_1fr_0.7fr] gap-2 px-4 py-2 hover:bg-primary/5 transition-colors group items-center"
           >
             <div 
               className="font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer"
@@ -158,6 +165,12 @@ export function PersonnelRosterList({ personnel, onRowClick, onStatusChange, isG
               onClick={() => onRowClick(person)}
             >
               {person.rank || '—'}
+            </div>
+            <div 
+              className="text-foreground cursor-pointer"
+              onClick={() => onRowClick(person)}
+            >
+              {person.role || '—'}
             </div>
             <div 
               className="text-foreground cursor-pointer"
