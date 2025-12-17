@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { useFirebasePersonnel, useFirebaseUnits, useFirebaseCurrentUnit } from '@/hooks/useFirebaseData'
 import { Plus, UserGear, User, Database } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
@@ -26,7 +26,7 @@ function App() {
   const { units, updateUnits, loading: unitsLoading } = useFirebaseUnits(DEFAULT_UNITS)
   const { currentUnitId, setCurrentUnitId, loading: unitIdLoading } = useFirebaseCurrentUnit(DEFAULT_UNITS[0].id)
   const { personnelByUnit, updatePersonnel, loading: personnelLoading } = useFirebasePersonnel()
-  const [userRole, setUserRole] = useKV<UserRole>('user-role', 'player')
+  const [userRole, setUserRole] = useLocalStorage<UserRole>('user-role', 'player')
   const [formOpen, setFormOpen] = useState(false)
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -41,8 +41,6 @@ function App() {
     rankCategories: [],
     specialties: [],
     characterTypes: [],
-    assignedUnits: [],
-    secondments: [],
     showInactive: false,
   })
 
@@ -201,22 +199,6 @@ function App() {
 
     if (filters.characterTypes.length > 0) {
       filtered = filtered.filter(p => filters.characterTypes.includes(p.characterType))
-    }
-
-    if (filters.assignedUnits.length > 0) {
-      // Convert unit IDs to unit names for comparison
-      const assignedUnitNames = filters.assignedUnits
-        .map(unitId => units?.find(u => u.id === unitId)?.name)
-        .filter((name): name is string => name != null)
-      filtered = filtered.filter(p => assignedUnitNames.includes(p.assignedUnit))
-    }
-
-    if (filters.secondments.length > 0) {
-      // Convert unit IDs to unit names for comparison
-      const secondmentUnitNames = filters.secondments
-        .map(unitId => units?.find(u => u.id === unitId)?.name)
-        .filter((name): name is string => name != null)
-      filtered = filtered.filter(p => p.secondment && secondmentUnitNames.includes(p.secondment))
     }
 
     return sortPersonnelByRank(filtered)
@@ -520,14 +502,13 @@ function App() {
               filters={filters}
               onFiltersChange={setFilters}
               availableSpecialties={availableSpecialties}
-              availableUnits={units || DEFAULT_UNITS}
             />
             {filteredPersonnel.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">No personnel match your search criteria</p>
                 <Button
                   variant="outline"
-                  onClick={() => setFilters({ searchQuery: '', statuses: [], rankCategories: [], specialties: [], characterTypes: [], assignedUnits: [], secondments: [], showInactive: false })}
+                  onClick={() => setFilters({ searchQuery: '', statuses: [], rankCategories: [], specialties: [], characterTypes: [], showInactive: false })}
                   className="mt-4 border-primary/30 hover:bg-primary/10"
                 >
                   Clear Filters

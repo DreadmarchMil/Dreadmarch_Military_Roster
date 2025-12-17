@@ -16,8 +16,6 @@ export interface SearchFilters {
   rankCategories: string[]
   specialties: string[]
   characterTypes: string[]
-  assignedUnits: string[]
-  secondments: string[]
   showInactive: boolean
 }
 
@@ -25,14 +23,12 @@ interface PersonnelSearchProps {
   filters: SearchFilters
   onFiltersChange: (filters: SearchFilters) => void
   availableSpecialties: string[]
-  availableUnits: Array<{ id: string; name: string }>
 }
 
 export function PersonnelSearch({
   filters,
   onFiltersChange,
   availableSpecialties,
-  availableUnits,
 }: PersonnelSearchProps) {
   const [localSearch, setLocalSearch] = useState(filters.searchQuery)
 
@@ -88,20 +84,6 @@ export function PersonnelSearch({
     onFiltersChange({ ...filters, specialties: newSpecialties })
   }
 
-  const handleAssignedUnitToggle = (unitId: string) => {
-    const newUnits = filters.assignedUnits.includes(unitId)
-      ? filters.assignedUnits.filter(u => u !== unitId)
-      : [...filters.assignedUnits, unitId]
-    onFiltersChange({ ...filters, assignedUnits: newUnits })
-  }
-
-  const handleSecondmentToggle = (unitId: string) => {
-    const newSecondments = filters.secondments.includes(unitId)
-      ? filters.secondments.filter(s => s !== unitId)
-      : [...filters.secondments, unitId]
-    onFiltersChange({ ...filters, secondments: newSecondments })
-  }
-
   const clearAllFilters = () => {
     setLocalSearch('')
     onFiltersChange({
@@ -110,8 +92,6 @@ export function PersonnelSearch({
       rankCategories: [],
       specialties: [],
       characterTypes: [],
-      assignedUnits: [],
-      secondments: [],
       showInactive: false,
     })
   }
@@ -125,17 +105,13 @@ export function PersonnelSearch({
     filters.statuses.length > 0 ||
     filters.rankCategories.length > 0 ||
     filters.specialties.length > 0 ||
-    filters.characterTypes.length > 0 ||
-    filters.assignedUnits.length > 0 ||
-    filters.secondments.length > 0
+    filters.characterTypes.length > 0
 
   const activeFilterCount =
     filters.statuses.length +
     filters.rankCategories.length +
     filters.specialties.length +
     filters.characterTypes.length +
-    filters.assignedUnits.length +
-    filters.secondments.length +
     (filters.searchQuery ? 1 : 0)
 
   return (
@@ -287,56 +263,6 @@ export function PersonnelSearch({
                           className="text-sm font-medium cursor-pointer"
                         >
                           {specialty}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {availableUnits.length > 0 && (
-                <div>
-                  <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
-                    Assigned Unit
-                  </Label>
-                  <div className="space-y-2 max-h-40 overflow-y-auto filter-scrollbar">
-                    {availableUnits.map((unit) => (
-                      <div key={unit.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`assigned-${unit.id}`}
-                          checked={filters.assignedUnits.includes(unit.id)}
-                          onCheckedChange={() => handleAssignedUnitToggle(unit.id)}
-                        />
-                        <label
-                          htmlFor={`assigned-${unit.id}`}
-                          className="text-sm font-medium cursor-pointer"
-                        >
-                          {unit.name}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {availableUnits.length > 0 && (
-                <div>
-                  <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
-                    Secondment
-                  </Label>
-                  <div className="space-y-2 max-h-40 overflow-y-auto filter-scrollbar">
-                    {availableUnits.map((unit) => (
-                      <div key={unit.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`secondment-${unit.id}`}
-                          checked={filters.secondments.includes(unit.id)}
-                          onCheckedChange={() => handleSecondmentToggle(unit.id)}
-                        />
-                        <label
-                          htmlFor={`secondment-${unit.id}`}
-                          className="text-sm font-medium cursor-pointer"
-                        >
-                          {unit.name}
                         </label>
                       </div>
                     ))}
