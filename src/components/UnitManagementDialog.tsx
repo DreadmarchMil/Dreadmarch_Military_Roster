@@ -338,7 +338,7 @@ export function UnitManagementDialog({
                 </Button>
               </div>
 
-              <ScrollArea className="flex-1 pr-4">
+              <ScrollArea className="h-[500px] overflow-hidden pr-4">
                 <div className="space-y-2">
                   {sortedUnits.map((unit) => {
                     const depth = getUnitDepth(unit.id)
