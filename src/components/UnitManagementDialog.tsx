@@ -31,7 +31,7 @@ export function UnitManagementDialog({
   const [mode, setMode] = useState<'list' | 'add' | 'edit'>('list')
   const [editingUnit, setEditingUnit] = useState<Unit | null>(null)
   const [newUnitName, setNewUnitName] = useState('')
-  const [newUnitParentId, setNewUnitParentId] = useState<string>('')
+  const [newUnitParentId, setNewUnitParentId] = useState<string>('__NONE__')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [unitToDelete, setUnitToDelete] = useState<Unit | null>(null)
   const [reassignUnitId, setReassignUnitId] = useState<string>('unassigned')
@@ -57,7 +57,7 @@ export function UnitManagementDialog({
 
   // Helper to check for circular references
   const wouldCreateCircularReference = (unitId: string, newParentId: string): boolean => {
-    if (!newParentId || newParentId === '') return false
+    if (!newParentId || newParentId === '' || newParentId === '__NONE__') return false
     if (unitId === newParentId) return true
     
     let currentParentId = newParentId
@@ -82,14 +82,14 @@ export function UnitManagementDialog({
 
   const handleStartAdd = () => {
     setNewUnitName('')
-    setNewUnitParentId('')
+    setNewUnitParentId('__NONE__')
     setMode('add')
   }
 
   const handleStartEdit = (unit: Unit) => {
     setEditingUnit(unit)
     setNewUnitName(unit.name)
-    setNewUnitParentId(unit.parentId || '')
+    setNewUnitParentId(unit.parentId || '__NONE__')
     setMode('edit')
   }
 
@@ -97,7 +97,7 @@ export function UnitManagementDialog({
     setMode('list')
     setEditingUnit(null)
     setNewUnitName('')
-    setNewUnitParentId('')
+    setNewUnitParentId('__NONE__')
   }
 
   const handleSaveUnit = () => {
@@ -124,7 +124,7 @@ export function UnitManagementDialog({
       }
 
       // Check for circular reference
-      if (newUnitParentId && wouldCreateCircularReference(newId, newUnitParentId)) {
+      if (newUnitParentId && newUnitParentId !== '__NONE__' && wouldCreateCircularReference(newId, newUnitParentId)) {
         toast.error('Cannot create circular parent reference')
         return
       }
@@ -132,7 +132,7 @@ export function UnitManagementDialog({
       const newUnit: Unit = {
         id: newId,
         name: trimmedName,
-        ...(newUnitParentId && { parentId: newUnitParentId })
+        ...(newUnitParentId && newUnitParentId !== '__NONE__' && { parentId: newUnitParentId })
       }
 
       updateUnits([...units, newUnit])
@@ -146,7 +146,7 @@ export function UnitManagementDialog({
       }
 
       // Check for circular reference
-      if (newUnitParentId && wouldCreateCircularReference(editingUnit.id, newUnitParentId)) {
+      if (newUnitParentId && newUnitParentId !== '__NONE__' && wouldCreateCircularReference(editingUnit.id, newUnitParentId)) {
         toast.error('Cannot create circular parent reference')
         return
       }
@@ -155,7 +155,7 @@ export function UnitManagementDialog({
       const updatedUnit: Unit = {
         ...editingUnit,
         name: trimmedName,
-        parentId: newUnitParentId || undefined
+        parentId: newUnitParentId && newUnitParentId !== '__NONE__' ? newUnitParentId : undefined
       }
 
       // Update unit
@@ -416,7 +416,7 @@ export function UnitManagementDialog({
                     <SelectValue placeholder="None (Top-level unit)" />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-primary/30">
-                    <SelectItem value="">None (Top-level unit)</SelectItem>
+                    <SelectItem value="__NONE__">None (Top-level unit)</SelectItem>
                     {sortUnits(availableParentUnits).map((unit) => {
                       const depth = getUnitDepth(unit.id)
                       return (
