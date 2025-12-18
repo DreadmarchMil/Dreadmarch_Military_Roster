@@ -13,10 +13,19 @@ const REQUIRED_ENV = [
 const isEnvConfigured = REQUIRED_ENV.every(k => Boolean(import.meta.env[k]))
 export const isEnabled = import.meta.env.VITE_FIREBASE_ENABLED === 'true' && isEnvConfigured
 
-// Debug logging at module initialization
-console.log('[firebase-adapter] Module initialization debug:', {
-  isEnabled,
+// 1. Startup logging - Show all environment variable values (masked)
+console.log('[firebase-adapter] Module initialization - Environment variables:', {
   VITE_FIREBASE_ENABLED: import.meta.env.VITE_FIREBASE_ENABLED,
+  VITE_FIREBASE_API_KEY: import.meta.env.VITE_FIREBASE_API_KEY ? '***masked***' : 'missing',
+  VITE_FIREBASE_AUTH_DOMAIN: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'missing',
+  VITE_FIREBASE_DATABASE_URL: import.meta.env.VITE_FIREBASE_DATABASE_URL || 'missing',
+  VITE_FIREBASE_PROJECT_ID: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'missing',
+  VITE_FIREBASE_STORAGE_BUCKET: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'missing',
+  VITE_FIREBASE_MESSAGING_SENDER_ID: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ? '***masked***' : 'missing',
+  VITE_FIREBASE_APP_ID: import.meta.env.VITE_FIREBASE_APP_ID ? '***masked***' : 'missing',
+})
+console.log('[firebase-adapter] Module initialization - Computed flags:', {
+  isEnabled,
   isEnvConfigured,
 })
 
@@ -68,56 +77,102 @@ try {
 
 // ---------- Firebase lazy init (only when enabled) ----------
 let firebaseDb: any = null
-let firebaseInitialized = false
+// 3. Fix race condition - Use promise to prevent concurrent initializations
+let firebaseInitPromise: Promise<void> | null = null
 
 async function initFirebaseIfNeeded() {
-  if (firebaseInitialized || !isEnabled) return
-  firebaseInitialized = true
-  try {
-    const [{ initializeApp }, { getDatabase, ref, onValue, set, get }] = await Promise.all([
-      import('firebase/app'),
-      import('firebase/database'),
-    ])
-    const app = initializeApp({
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-      databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      appId: import.meta.env.VITE_FIREBASE_APP_ID,
-    })
-    firebaseDb = getDatabase(app)
-    ;(initFirebaseIfNeeded as any)._impl = { ref, onValue, set, get, db: firebaseDb }
-} catch (err) {
-  console.error('[firebase-adapter] Firebase init failed, falling back to mock', err)
+  // If already initializing, wait for that to complete
+  if (firebaseInitPromise) {
+    console.log('[firebase-adapter] Init already in progress, waiting...')
+    return firebaseInitPromise
+  }
   
-  // Debug logging: Environment variable checks
-  console.error('[firebase-adapter] Debug - Required environment variables check:')
-  REQUIRED_ENV.forEach(envVar => {
-    const value = import.meta.env[envVar]
-    const isValid = value && String(value).trim().length > 0
-    console.error(`  ${envVar}: ${isValid ? '✓ present' : '✗ missing'}`)
-  })
+  // Check if already initialized
+  if ((initFirebaseIfNeeded as any)._impl) {
+    console.log('[firebase-adapter] Already initialized, skipping')
+    return
+  }
   
-  // Debug logging: Environment flags
-  console.error('[firebase-adapter] Debug - Environment flags:', {
-    isEnabled,
-    isEnvConfigured,
-    VITE_FIREBASE_ENABLED: import.meta.env.VITE_FIREBASE_ENABLED,
-  })
+  if (!isEnabled) {
+    console.log('[firebase-adapter] Firebase not enabled, skipping initialization')
+    return
+  }
+
+  console.log('[firebase-adapter] Starting Firebase initialization...')
   
-  // Debug logging: Firebase config (mask sensitive values)
-  console.error('[firebase-adapter] Debug - Firebase config used:', {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? '***masked***' : 'missing',
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'missing',
-    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || 'missing',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'missing',
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'missing',
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ? '***masked***' : 'missing',
-    appId: import.meta.env.VITE_FIREBASE_APP_ID ? '***masked***' : 'missing',
-  })
-}
+  // Create and store the initialization promise
+  firebaseInitPromise = (async () => {
+    try {
+      // 2. Step-by-step initialization logging
+      console.log('[firebase-adapter] Step 1: Importing Firebase modules...')
+      const [{ initializeApp }, { getDatabase, ref, onValue, set, get }] = await Promise.all([
+        import('firebase/app'),
+        import('firebase/database'),
+      ])
+      console.log('[firebase-adapter] Step 2: Firebase modules imported successfully')
+      
+      console.log('[firebase-adapter] Step 3: Initializing Firebase app with config...')
+      const app = initializeApp({
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      })
+      console.log('[firebase-adapter] Step 4: Firebase app initialized successfully')
+      
+      console.log('[firebase-adapter] Step 5: Getting database instance...')
+      firebaseDb = getDatabase(app)
+      console.log('[firebase-adapter] Step 6: Database instance obtained')
+      
+      console.log('[firebase-adapter] Step 7: Storing implementation object...')
+      ;(initFirebaseIfNeeded as any)._impl = { ref, onValue, set, get, db: firebaseDb }
+      
+      // 5. Post-init verification logging
+      const impl = (initFirebaseIfNeeded as any)._impl
+      console.log('[firebase-adapter] Firebase initialization complete!', {
+        implStored: !!impl,
+        dbStored: !!firebaseDb,
+        hasRef: !!impl?.ref,
+        hasOnValue: !!impl?.onValue,
+        hasSet: !!impl?.set,
+        hasGet: !!impl?.get,
+      })
+    } catch (err) {
+      // 4. Improve error capture - Log error details separately
+      const error = err as Error
+      console.error('[firebase-adapter] Firebase initialization failed!')
+      console.error('[firebase-adapter] Error name:', error?.name || 'Unknown')
+      console.error('[firebase-adapter] Error message:', error?.message || 'No message')
+      if (error?.stack) {
+        console.error('[firebase-adapter] Error stack:', error.stack)
+      }
+      
+      // Debug logging: Environment variable checks
+      console.error('[firebase-adapter] Debug - Required environment variables check:')
+      REQUIRED_ENV.forEach(envVar => {
+        const value = import.meta.env[envVar]
+        const isValid = value && String(value).trim().length > 0
+        console.error(`  ${envVar}: ${isValid ? '✓ present' : '✗ missing'}`)
+      })
+      
+      // Debug logging: Environment flags
+      console.error('[firebase-adapter] Debug - Environment flags:', {
+        isEnabled,
+        isEnvConfigured,
+        VITE_FIREBASE_ENABLED: import.meta.env.VITE_FIREBASE_ENABLED,
+      })
+      
+      console.error('[firebase-adapter] Falling back to mock mode')
+    } finally {
+      // Clear the promise so future calls can retry if needed
+      firebaseInitPromise = null
+    }
+  })()
+  
+  return firebaseInitPromise
 }
 
 // ---------- Public adapter API ----------
