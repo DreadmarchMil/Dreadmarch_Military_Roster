@@ -82,9 +82,15 @@ async function initFirebaseIfNeeded() {
     })
     firebaseDb = getDatabase(app)
     ;(initFirebaseIfNeeded as any)._impl = { ref, onValue, set, get, db: firebaseDb }
-  } catch (err) {
-    console.warn('[firebase-adapter] Firebase init failed, falling back to mock', err)
-  }
+} catch (err) {
+  console.error('[firebase-adapter] Firebase init failed, falling back to mock', err)
+  // Add this line for more details:
+  console.error('Firebase config used:', {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? '***masked***' : 'missing',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+    // etc. for others, but mask sensitive ones
+  })
 }
 
 // ---------- Public adapter API ----------
