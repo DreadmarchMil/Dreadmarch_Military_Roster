@@ -6,31 +6,47 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const UNIT_ORDER = [
-  'high-command',
-  '4th-sof',
-  '17th-assault',
-  'vornskr-company',
-  'imperial-reclamation',
-  'imperial-conquest',
-  'iss-beaumont',
-  'dagger-squadron',
-  'warrior-cadre',
-  'imperial-auxiliary',
-  'unassigned'
-]
-
 export function sortUnits(units: Unit[]): Unit[] {
-  return [...units].sort((a, b) => {
-    const indexA = UNIT_ORDER.indexOf(a.id)
-    const indexB = UNIT_ORDER.indexOf(b.id)
+  // Always put unassigned at the end
+  const unassigned = units.find(u => u.id === 'unassigned')
+  const otherUnits = units.filter(u => u.id !== 'unassigned')
+  
+  // Build a map for quick parent lookup
+  const unitMap = new Map(otherUnits.map(u => [u.id, u]))
+  
+  // Cache for memoizing path calculations
+  const pathCache = new Map<string, string>()
+  
+  // Helper to get full path for sorting (for consistent ordering)
+  const getPath = (unit: Unit): string => {
+    // Check cache first
+    if (pathCache.has(unit.id)) {
+      return pathCache.get(unit.id)!
+    }
     
-    if (indexA === -1 && indexB === -1) return a.name.localeCompare(b.name)
-    if (indexA === -1) return 1
-    if (indexB === -1) return -1
+    // Calculate path
+    let path: string
+    if (!unit.parentId) {
+      path = unit.name
+    } else {
+      const parent = unitMap.get(unit.parentId)
+      path = parent ? `${getPath(parent)}/${unit.name}` : unit.name
+    }
     
-    return indexA - indexB
+    // Store in cache
+    pathCache.set(unit.id, path)
+    return path
+  }
+  
+  // Sort by path (this ensures parents come before children and alphabetical order)
+  const sorted = otherUnits.sort((a, b) => {
+    const pathA = getPath(a)
+    const pathB = getPath(b)
+    return pathA.localeCompare(pathB)
   })
+  
+  // Add unassigned at the end if it exists
+  return unassigned ? [...sorted, unassigned] : sorted
 }
 
 export function sortPersonnelByRank(personnel: Personnel[]): Personnel[] {
