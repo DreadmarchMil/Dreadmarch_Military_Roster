@@ -272,13 +272,13 @@ export function UnitManagementDialog({
 
   const availableParentUnits = useMemo(() => {
     // Helper to get all descendant unit IDs
-    const getDescendants = (unitId: string): string[] => {
+    const getDescendantIds = (unitId: string): string[] => {
       const descendants: string[] = []
       const children = units.filter(u => u.parentId === unitId)
       
       for (const child of children) {
         descendants.push(child.id)
-        descendants.push(...getDescendants(child.id))
+        descendants.push(...getDescendantIds(child.id))
       }
       
       return descendants
@@ -286,7 +286,7 @@ export function UnitManagementDialog({
 
     if (mode === 'edit' && editingUnit) {
       // Exclude the current unit and its descendants from parent options
-      const excludedIds = new Set([editingUnit.id, ...getDescendants(editingUnit.id)])
+      const excludedIds = new Set([editingUnit.id, ...getDescendantIds(editingUnit.id)])
       return units.filter(u => !excludedIds.has(u.id) && u.id !== 'unassigned')
     }
     return units.filter(u => u.id !== 'unassigned')
@@ -294,13 +294,13 @@ export function UnitManagementDialog({
 
   const reassignableUnits = useMemo(() => {
     // Helper to get all descendant unit IDs
-    const getDescendants = (unitId: string): string[] => {
+    const getDescendantIds = (unitId: string): string[] => {
       const descendants: string[] = []
       const children = units.filter(u => u.parentId === unitId)
       
       for (const child of children) {
         descendants.push(child.id)
-        descendants.push(...getDescendants(child.id))
+        descendants.push(...getDescendantIds(child.id))
       }
       
       return descendants
@@ -308,7 +308,7 @@ export function UnitManagementDialog({
 
     if (!unitToDelete) return units
     // Exclude the unit being deleted and its descendants
-    const excludedIds = new Set([unitToDelete.id, ...getDescendants(unitToDelete.id)])
+    const excludedIds = new Set([unitToDelete.id, ...getDescendantIds(unitToDelete.id)])
     return units.filter(u => !excludedIds.has(u.id))
   }, [unitToDelete, units])
 

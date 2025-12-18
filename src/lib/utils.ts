@@ -14,11 +14,28 @@ export function sortUnits(units: Unit[]): Unit[] {
   // Build a map for quick parent lookup
   const unitMap = new Map(otherUnits.map(u => [u.id, u]))
   
+  // Cache for memoizing path calculations
+  const pathCache = new Map<string, string>()
+  
   // Helper to get full path for sorting (for consistent ordering)
   const getPath = (unit: Unit): string => {
-    if (!unit.parentId) return unit.name
-    const parent = unitMap.get(unit.parentId)
-    return parent ? `${getPath(parent)}/${unit.name}` : unit.name
+    // Check cache first
+    if (pathCache.has(unit.id)) {
+      return pathCache.get(unit.id)!
+    }
+    
+    // Calculate path
+    let path: string
+    if (!unit.parentId) {
+      path = unit.name
+    } else {
+      const parent = unitMap.get(unit.parentId)
+      path = parent ? `${getPath(parent)}/${unit.name}` : unit.name
+    }
+    
+    // Store in cache
+    pathCache.set(unit.id, path)
+    return path
   }
   
   // Sort by path (this ensures parents come before children and alphabetical order)
