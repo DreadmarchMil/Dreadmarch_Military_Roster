@@ -131,23 +131,23 @@ async function initFirebaseIfNeeded() {
       ;(initFirebaseIfNeeded as any)._impl = { ref, onValue, set, get, db: firebaseDb }
       
       // 5. Post-init verification logging
-      const implStored = !!(initFirebaseIfNeeded as any)._impl
-      const dbStored = !!firebaseDb
+      const impl = (initFirebaseIfNeeded as any)._impl
       console.log('[firebase-adapter] Firebase initialization complete!', {
-        implStored,
-        dbStored,
-        hasRef: !!((initFirebaseIfNeeded as any)._impl?.ref),
-        hasOnValue: !!((initFirebaseIfNeeded as any)._impl?.onValue),
-        hasSet: !!((initFirebaseIfNeeded as any)._impl?.set),
-        hasGet: !!((initFirebaseIfNeeded as any)._impl?.get),
+        implStored: !!impl,
+        dbStored: !!firebaseDb,
+        hasRef: !!impl?.ref,
+        hasOnValue: !!impl?.onValue,
+        hasSet: !!impl?.set,
+        hasGet: !!impl?.get,
       })
     } catch (err) {
       // 4. Improve error capture - Log error details separately
+      const error = err as Error
       console.error('[firebase-adapter] Firebase initialization failed!')
-      console.error('[firebase-adapter] Error name:', (err as Error)?.name || 'Unknown')
-      console.error('[firebase-adapter] Error message:', (err as Error)?.message || 'No message')
-      if ((err as Error)?.stack) {
-        console.error('[firebase-adapter] Error stack:', (err as Error).stack)
+      console.error('[firebase-adapter] Error name:', error?.name || 'Unknown')
+      console.error('[firebase-adapter] Error message:', error?.message || 'No message')
+      if (error?.stack) {
+        console.error('[firebase-adapter] Error stack:', error.stack)
       }
       
       // Debug logging: Environment variable checks
