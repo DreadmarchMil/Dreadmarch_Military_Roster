@@ -89,7 +89,8 @@ async function initFirebaseIfNeeded() {
   console.error('[firebase-adapter] Debug - Required environment variables check:')
   REQUIRED_ENV.forEach(envVar => {
     const value = import.meta.env[envVar]
-    console.error(`  ${envVar}: ${value ? '✓ present' : '✗ missing'}`)
+    const isValid = value && String(value).trim().length > 0
+    console.error(`  ${envVar}: ${isValid ? '✓ present' : '✗ missing'}`)
   })
   
   // Debug logging: Environment flags
