@@ -132,7 +132,10 @@ export async function write(path: string, value: any): Promise<void> {
 }
 
 export async function subscribe(path: string, cb: (value: any) => void): Promise<() => void> {
+  console.log('[firebase-adapter] subscribe() called', { path, isEnabled })
+  
   if (!isEnabled) {
+    console.log('[firebase-adapter] Using mock implementation for subscribe', { path })
     listeners[path] = listeners[path] || new Set()
     listeners[path].add(cb)
     cb(getFromMock(path))
@@ -141,11 +144,13 @@ export async function subscribe(path: string, cb: (value: any) => void): Promise
   await initFirebaseIfNeeded()
   const impl = (initFirebaseIfNeeded as any)._impl
   if (!impl) {
+    console.log('[firebase-adapter] Firebase not initialized, falling back to mock for subscribe', { path })
     listeners[path] = listeners[path] || new Set()
     listeners[path].add(cb)
     cb(getFromMock(path))
     return () => listeners[path].delete(cb)
   }
+  console.log('[firebase-adapter] Using Firebase implementation for subscribe', { path })
   const dbRef = impl.ref(impl.db, path)
   const handler = (snap: any) => cb(snap.val())
   const unsubscribe = impl.onValue(dbRef, handler)
