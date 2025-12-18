@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { useFirebasePersonnel, useFirebaseUnits, useFirebaseCurrentUnit } from '@/hooks/useFirebaseData'
-import { Plus, UserGear, User, Database } from '@phosphor-icons/react'
+import { Plus, UserGear, User, Database, GearSix } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Toaster, toast } from 'sonner'
 import { PersonnelRosterList } from '@/components/PersonnelRosterList'
@@ -11,6 +11,7 @@ import { DeleteConfirmation } from '@/components/DeleteConfirmation'
 import { EmptyState } from '@/components/EmptyState'
 import { PasskeyDialog } from '@/components/PasskeyDialog'
 import { UnitSwitcher } from '@/components/UnitSwitcher'
+import { UnitManagementDialog } from '@/components/UnitManagementDialog'
 import { PersonnelSearch, type SearchFilters } from '@/components/PersonnelSearch'
 import { ImportExportDialog } from '@/components/ImportExportDialog'
 import { BootScreen } from '@/components/BootScreen'
@@ -33,6 +34,7 @@ function App() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [passkeyDialogOpen, setPasskeyDialogOpen] = useState(false)
   const [importExportOpen, setImportExportOpen] = useState(false)
+  const [unitManagementOpen, setUnitManagementOpen] = useState(false)
   const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel | null>(null)
   const [editingPersonnel, setEditingPersonnel] = useState<Personnel | undefined>(undefined)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -417,6 +419,14 @@ function App() {
     setImportExportOpen(true)
   }
 
+  const handleOpenUnitManagement = () => {
+    if (!isGM) {
+      toast.error('Access denied', { description: 'Only GMs can manage units' })
+      return
+    }
+    setUnitManagementOpen(true)
+  }
+
   const deletingPersonnel = allPersonnel?.find(p => p.id === deletingId)
 
   // Show boot screen only if boot is not complete (regardless of loading state)
@@ -448,12 +458,25 @@ function App() {
             Dreadmarch Military Personnel Database
           </h1>
           <div className="flex items-center justify-between gap-4">
-            <UnitSwitcher 
-              units={units || DEFAULT_UNITS}
-              currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
-              onUnitChange={setCurrentUnitId}
-              isGM={isGM}
-            />
+            <div className="flex items-center gap-2 flex-1 max-w-lg">
+              <UnitSwitcher 
+                units={units || DEFAULT_UNITS}
+                currentUnitId={currentUnitId || DEFAULT_UNITS[0].id}
+                onUnitChange={setCurrentUnitId}
+                isGM={isGM}
+              />
+              {isGM && (
+                <Button
+                  onClick={handleOpenUnitManagement}
+                  variant="outline"
+                  size="icon"
+                  className="border-primary/30 hover:bg-primary/10"
+                  title="Manage Units"
+                >
+                  <GearSix size={20} />
+                </Button>
+              )}
+            </div>
             <div className="flex items-center gap-3">
               {isGM && <ConnectionStatus isConnected={isFirebaseEnabled} />}
               {isGM && (
@@ -571,6 +594,15 @@ function App() {
         personnelByUnit={personnelByUnit || {}}
         units={units || DEFAULT_UNITS}
         onImport={handleImport}
+      />
+
+      <UnitManagementDialog
+        open={unitManagementOpen}
+        onOpenChange={setUnitManagementOpen}
+        units={units || DEFAULT_UNITS}
+        updateUnits={updateUnits}
+        personnelByUnit={personnelByUnit || {}}
+        updatePersonnel={updatePersonnel}
       />
     </div>
   )
