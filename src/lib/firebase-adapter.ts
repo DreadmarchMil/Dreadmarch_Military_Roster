@@ -13,6 +13,13 @@ const REQUIRED_ENV = [
 const isEnvConfigured = REQUIRED_ENV.every(k => Boolean(import.meta.env[k]))
 export const isEnabled = import.meta.env.VITE_FIREBASE_ENABLED === 'true' && isEnvConfigured
 
+// Debug logging at module initialization
+console.log('[firebase-adapter] Module initialization debug:', {
+  isEnabled,
+  VITE_FIREBASE_ENABLED: import.meta.env.VITE_FIREBASE_ENABLED,
+  isEnvConfigured,
+})
+
 // ---------- Mock store implementation ----------
 const mockStore: Record<string, any> = {}
 const listeners: Record<string, Set<Listener>> = {}
