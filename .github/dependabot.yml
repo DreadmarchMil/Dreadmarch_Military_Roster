@@ -3,7 +3,32 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      # Group Tailwind CSS related packages
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "tailwind-merge"
+      # Group all Radix UI packages
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+      # Group React ecosystem packages
+      react:
+        patterns:
+          - "react"
+          - "react-*"
+      # Group TypeScript type definitions
+      typescript-types:
+        patterns:
+          - "@types/*"
+      # Group ESLint related packages
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
 
   - package-ecosystem: "devcontainers"
     directory: "/"
