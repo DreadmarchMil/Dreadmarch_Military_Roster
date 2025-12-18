@@ -84,13 +84,33 @@ async function initFirebaseIfNeeded() {
     ;(initFirebaseIfNeeded as any)._impl = { ref, onValue, set, get, db: firebaseDb }
 } catch (err) {
   console.error('[firebase-adapter] Firebase init failed, falling back to mock', err)
-  // Add this line for more details:
-  console.error('Firebase config used:', {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? '***masked***' : 'missing',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-    // etc. for others, but mask sensitive ones
+  
+  // Debug logging: Environment variable checks
+  console.error('[firebase-adapter] Debug - Required environment variables check:')
+  REQUIRED_ENV.forEach(envVar => {
+    const value = import.meta.env[envVar]
+    const isValid = value && String(value).trim().length > 0
+    console.error(`  ${envVar}: ${isValid ? '✓ present' : '✗ missing'}`)
   })
+  
+  // Debug logging: Environment flags
+  console.error('[firebase-adapter] Debug - Environment flags:', {
+    isEnabled,
+    isEnvConfigured,
+    VITE_FIREBASE_ENABLED: import.meta.env.VITE_FIREBASE_ENABLED,
+  })
+  
+  // Debug logging: Firebase config (mask sensitive values)
+  console.error('[firebase-adapter] Debug - Firebase config used:', {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? '***masked***' : 'missing',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'missing',
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || 'missing',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'missing',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'missing',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ? '***masked***' : 'missing',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID ? '***masked***' : 'missing',
+  })
+}
 }
 
 // ---------- Public adapter API ----------
