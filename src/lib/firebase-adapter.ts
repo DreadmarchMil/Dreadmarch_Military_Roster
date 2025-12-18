@@ -14,15 +14,16 @@ const isEnvConfigured = REQUIRED_ENV.every(k => Boolean(import.meta.env[k]))
 export const isEnabled = import.meta.env.VITE_FIREBASE_ENABLED === 'true' && isEnvConfigured
 
 // 1. Startup logging - Show all environment variable values (masked)
-console.log('[firebase-adapter] Module initialization - Environment variables:')
-console.log('  VITE_FIREBASE_ENABLED:', import.meta.env.VITE_FIREBASE_ENABLED)
-console.log('  VITE_FIREBASE_API_KEY:', import.meta.env.VITE_FIREBASE_API_KEY ? `***${String(import.meta.env.VITE_FIREBASE_API_KEY).slice(-4)}` : 'missing')
-console.log('  VITE_FIREBASE_AUTH_DOMAIN:', import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'missing')
-console.log('  VITE_FIREBASE_DATABASE_URL:', import.meta.env.VITE_FIREBASE_DATABASE_URL || 'missing')
-console.log('  VITE_FIREBASE_PROJECT_ID:', import.meta.env.VITE_FIREBASE_PROJECT_ID || 'missing')
-console.log('  VITE_FIREBASE_STORAGE_BUCKET:', import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'missing')
-console.log('  VITE_FIREBASE_MESSAGING_SENDER_ID:', import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ? `***${String(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID).slice(-4)}` : 'missing')
-console.log('  VITE_FIREBASE_APP_ID:', import.meta.env.VITE_FIREBASE_APP_ID ? `***${String(import.meta.env.VITE_FIREBASE_APP_ID).slice(-4)}` : 'missing')
+console.log('[firebase-adapter] Module initialization - Environment variables:', {
+  VITE_FIREBASE_ENABLED: import.meta.env.VITE_FIREBASE_ENABLED,
+  VITE_FIREBASE_API_KEY: import.meta.env.VITE_FIREBASE_API_KEY ? '***masked***' : 'missing',
+  VITE_FIREBASE_AUTH_DOMAIN: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'missing',
+  VITE_FIREBASE_DATABASE_URL: import.meta.env.VITE_FIREBASE_DATABASE_URL || 'missing',
+  VITE_FIREBASE_PROJECT_ID: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'missing',
+  VITE_FIREBASE_STORAGE_BUCKET: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'missing',
+  VITE_FIREBASE_MESSAGING_SENDER_ID: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ? '***masked***' : 'missing',
+  VITE_FIREBASE_APP_ID: import.meta.env.VITE_FIREBASE_APP_ID ? '***masked***' : 'missing',
+})
 console.log('[firebase-adapter] Module initialization - Computed flags:', {
   isEnabled,
   isEnvConfigured,
@@ -145,8 +146,9 @@ async function initFirebaseIfNeeded() {
       console.error('[firebase-adapter] Firebase initialization failed!')
       console.error('[firebase-adapter] Error name:', (err as Error)?.name || 'Unknown')
       console.error('[firebase-adapter] Error message:', (err as Error)?.message || 'No message')
-      console.error('[firebase-adapter] Error stack:', (err as Error)?.stack || 'No stack trace')
-      console.error('[firebase-adapter] Full error object:', err)
+      if ((err as Error)?.stack) {
+        console.error('[firebase-adapter] Error stack:', (err as Error).stack)
+      }
       
       // Debug logging: Environment variable checks
       console.error('[firebase-adapter] Debug - Required environment variables check:')
