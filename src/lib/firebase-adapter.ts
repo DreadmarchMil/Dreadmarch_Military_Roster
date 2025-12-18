@@ -109,7 +109,7 @@ async function initFirebaseIfNeeded() {
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ? '***masked***' : 'missing',
     appId: import.meta.env.VITE_FIREBASE_APP_ID ? '***masked***' : 'missing',
   })
-  }
+}
 }
 
 // ---------- Public adapter API ----------
