@@ -36,14 +36,16 @@ export function UnitManagementDialog({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [unitToDelete, setUnitToDelete] = useState<Unit | null>(null)
   const [reassignUnitId, setReassignUnitId] = useState<string>('unassigned')
-  const [reorderableUnits, setReorderableUnits] = useState<Unit[]>([])
 
   const sortedUnits = useMemo(() => sortUnits(units), [units])
+  
+  // Initialize reorderable units from sorted units (only updates when units array changes)
+  const [reorderableUnits, setReorderableUnits] = useState<Unit[]>(() => sortUnits(units))
 
-  // Update reorderable units when sortedUnits changes
+  // Update reorderable units only when the underlying units array changes (not when sorted)
   useEffect(() => {
-    setReorderableUnits(sortedUnits)
-  }, [sortedUnits])
+    setReorderableUnits(sortUnits(units))
+  }, [units])
 
   // Helper to get unit depth for indentation
   const getUnitDepth = (unitId: string): number => {
@@ -326,7 +328,12 @@ export function UnitManagementDialog({
     // Assign sortOrder values based on the new position
     const updatedUnits = units.map(unit => {
       const newIndex = newOrder.findIndex(u => u.id === unit.id)
-      if (newIndex === -1) return unit // Unit not in the reordered list (e.g., unassigned)
+      
+      // If unit is not in reorderable list (e.g., unassigned), remove sortOrder
+      if (newIndex === -1) {
+        const { sortOrder, ...unitWithoutSort } = unit
+        return unitWithoutSort as Unit
+      }
       
       return {
         ...unit,
