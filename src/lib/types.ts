@@ -23,6 +23,7 @@ export interface Unit {
   id: string
   name: string
   parentId?: string
+  sortOrder?: number
 }
 
 export const DEFAULT_UNITS: Unit[] = [

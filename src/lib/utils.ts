@@ -38,8 +38,18 @@ export function sortUnits(units: Unit[]): Unit[] {
     return path
   }
   
-  // Sort by path (this ensures parents come before children and alphabetical order)
+  // Sort by sortOrder if present, then by path
   const sorted = otherUnits.sort((a, b) => {
+    // If both have sortOrder, use that
+    if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
+      return a.sortOrder - b.sortOrder
+    }
+    
+    // If only one has sortOrder, it comes first
+    if (a.sortOrder !== undefined) return -1
+    if (b.sortOrder !== undefined) return 1
+    
+    // Otherwise sort by path (alphabetical with hierarchy)
     const pathA = getPath(a)
     const pathB = getPath(b)
     return pathA.localeCompare(pathB)
