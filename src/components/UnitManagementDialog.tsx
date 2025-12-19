@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,7 +41,7 @@ export function UnitManagementDialog({
   const sortedUnits = useMemo(() => sortUnits(units), [units])
 
   // Update reorderable units when sortedUnits changes
-  useMemo(() => {
+  useEffect(() => {
     setReorderableUnits(sortedUnits)
   }, [sortedUnits])
 
@@ -360,13 +360,15 @@ export function UnitManagementDialog({
           cursor: 'grabbing'
         }}
       >
-        {!isProtected && (
+        {!isProtected ? (
           <div
             className="mr-3 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors"
             onPointerDown={(e) => dragControls.start(e)}
           >
             <DotsSixVertical size={20} weight="bold" />
           </div>
+        ) : (
+          <div className="mr-3 w-5" />
         )}
         <div className="flex-1">
           <div className="font-semibold text-foreground uppercase tracking-wide">
