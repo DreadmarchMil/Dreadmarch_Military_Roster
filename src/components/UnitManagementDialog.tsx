@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { PencilSimple, Trash, Plus, Warning, TreeStructure } from '@phosphor-icons/react'
+import { PencilSimple, Trash, Plus, Warning, TreeStructure, DotsSixVertical } from '@phosphor-icons/react'
+import { Reorder, useDragControls } from 'framer-motion'
 import type { Unit, Personnel } from '@/lib/types'
 import { sortUnits } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -35,8 +36,14 @@ export function UnitManagementDialog({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [unitToDelete, setUnitToDelete] = useState<Unit | null>(null)
   const [reassignUnitId, setReassignUnitId] = useState<string>('unassigned')
+  const [reorderableUnits, setReorderableUnits] = useState<Unit[]>([])
 
   const sortedUnits = useMemo(() => sortUnits(units), [units])
+
+  // Update reorderable units when sortedUnits changes
+  useMemo(() => {
+    setReorderableUnits(sortedUnits)
+  }, [sortedUnits])
 
   // Helper to get unit depth for indentation
   const getUnitDepth = (unitId: string): number => {
@@ -312,6 +319,93 @@ export function UnitManagementDialog({
     return units.filter(u => !excludedIds.has(u.id))
   }, [unitToDelete, units])
 
+  // Handle reorder of units via drag-and-drop
+  const handleReorder = (newOrder: Unit[]) => {
+    setReorderableUnits(newOrder)
+    
+    // Assign sortOrder values based on the new position
+    const updatedUnits = units.map(unit => {
+      const newIndex = newOrder.findIndex(u => u.id === unit.id)
+      if (newIndex === -1) return unit // Unit not in the reordered list (e.g., unassigned)
+      
+      return {
+        ...unit,
+        sortOrder: newIndex
+      }
+    })
+    
+    updateUnits(updatedUnits)
+    toast.success('Unit order updated')
+  }
+
+  // Component for a draggable unit row
+  const DraggableUnitRow = ({ unit }: { unit: Unit }) => {
+    const dragControls = useDragControls()
+    const depth = getUnitDepth(unit.id)
+    const personnelCount = getPersonnelCount(unit.id)
+    const isProtected = unit.id === 'unassigned'
+
+    return (
+      <Reorder.Item
+        key={unit.id}
+        value={unit}
+        dragListener={false}
+        dragControls={dragControls}
+        className="flex items-center justify-between p-3 rounded border border-border bg-secondary/20 hover:bg-secondary/30 transition-colors"
+        style={{ paddingLeft: `${0.75 + depth * 1.5}rem` }}
+        whileDrag={{
+          scale: 1.02,
+          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
+          opacity: 0.9,
+          cursor: 'grabbing'
+        }}
+      >
+        {!isProtected && (
+          <div
+            className="mr-3 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors"
+            onPointerDown={(e) => dragControls.start(e)}
+          >
+            <DotsSixVertical size={20} weight="bold" />
+          </div>
+        )}
+        <div className="flex-1">
+          <div className="font-semibold text-foreground uppercase tracking-wide">
+            {depth > 0 && '└ '}{unit.name}
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">
+            {personnelCount} personnel
+            {unit.parentId && ` • Child of ${units.find(u => u.id === unit.parentId)?.name}`}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 ml-4">
+          {!isProtected && (
+            <>
+              <Button
+                onClick={() => handleStartEdit(unit)}
+                variant="ghost"
+                size="sm"
+                className="hover:bg-primary/10 hover:text-primary"
+              >
+                <PencilSimple size={18} />
+              </Button>
+              <Button
+                onClick={() => handleStartDelete(unit)}
+                variant="ghost"
+                size="sm"
+                className="hover:bg-destructive/10 hover:text-destructive"
+              >
+                <Trash size={18} />
+              </Button>
+            </>
+          )}
+          {isProtected && (
+            <span className="text-xs text-muted-foreground uppercase">Protected</span>
+          )}
+        </div>
+      </Reorder.Item>
+    )
+  }
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -339,56 +433,16 @@ export function UnitManagementDialog({
               </div>
 
               <ScrollArea className="h-[500px] overflow-hidden pr-4">
-                <div className="space-y-2">
-                  {sortedUnits.map((unit) => {
-                    const depth = getUnitDepth(unit.id)
-                    const personnelCount = getPersonnelCount(unit.id)
-                    const isProtected = unit.id === 'unassigned'
-
-                    return (
-                      <div
-                        key={unit.id}
-                        className="flex items-center justify-between p-3 rounded border border-border bg-secondary/20 hover:bg-secondary/30 transition-colors"
-                        style={{ paddingLeft: `${0.75 + depth * 1.5}rem` }}
-                      >
-                        <div className="flex-1">
-                          <div className="font-semibold text-foreground uppercase tracking-wide">
-                            {depth > 0 && '└ '}{unit.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {personnelCount} personnel
-                            {unit.parentId && ` • Child of ${units.find(u => u.id === unit.parentId)?.name}`}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          {!isProtected && (
-                            <>
-                              <Button
-                                onClick={() => handleStartEdit(unit)}
-                                variant="ghost"
-                                size="sm"
-                                className="hover:bg-primary/10 hover:text-primary"
-                              >
-                                <PencilSimple size={18} />
-                              </Button>
-                              <Button
-                                onClick={() => handleStartDelete(unit)}
-                                variant="ghost"
-                                size="sm"
-                                className="hover:bg-destructive/10 hover:text-destructive"
-                              >
-                                <Trash size={18} />
-                              </Button>
-                            </>
-                          )}
-                          {isProtected && (
-                            <span className="text-xs text-muted-foreground uppercase">Protected</span>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
+                <Reorder.Group
+                  axis="y"
+                  values={reorderableUnits}
+                  onReorder={handleReorder}
+                  className="space-y-2"
+                >
+                  {reorderableUnits.map((unit) => (
+                    <DraggableUnitRow key={unit.id} unit={unit} />
+                  ))}
+                </Reorder.Group>
               </ScrollArea>
             </div>
           ) : (
