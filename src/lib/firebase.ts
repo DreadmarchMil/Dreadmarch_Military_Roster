@@ -6,7 +6,6 @@ import { hashValue, verifyHash } from './hash'
 export const dbRefs = {
   personnelByUnit: () => 'personnelByUnit',
   units: () => 'units',
-  currentUnitId: () => 'currentUnitId',
   gmPasskey: () => 'gmPasskey'
 }
 
@@ -35,30 +34,12 @@ export const firebaseHelpers = {
     }
   },
 
-  subscribeToCurrentUnitId: (callback: (unitId: string) => void, defaultValue?: string) => {
-    let unsub: (() => void) | null = null
-    let cancelled = false
-    subscribe(dbRefs.currentUnitId(), (val) => { 
-      callback(val || defaultValue || '')
-    }).then(fn => { 
-      if (!cancelled) unsub = fn 
-    })
-    return () => { 
-      cancelled = true
-      if (unsub) unsub() 
-    }
-  },
-
   updatePersonnel: async (data: Record<string, Personnel[]>) => {
     await write(dbRefs.personnelByUnit(), data)
   },
 
   updateUnits: async (data: Unit[]) => {
     await write(dbRefs.units(), data)
-  },
-
-  updateCurrentUnitId: async (unitId: string) => {
-    await write(dbRefs.currentUnitId(), unitId)
   },
 
   getPasskey: async () => {
@@ -89,7 +70,6 @@ export const firebaseHelpers = {
     const existingUnits = await read(dbRefs.units())
     if (!existingUnits || (Array.isArray(existingUnits) && existingUnits.length === 0)) {
       await write(dbRefs.units(), defaultUnits)
-      await write(dbRefs.currentUnitId(), defaultUnits[0].id)
       await write(dbRefs.personnelByUnit(), {})
     }
   }

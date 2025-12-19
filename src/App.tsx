@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { useFirebasePersonnel, useFirebaseUnits, useFirebaseCurrentUnit } from '@/hooks/useFirebaseData'
+import { useFirebasePersonnel, useFirebaseUnits } from '@/hooks/useFirebaseData'
 import { Plus, UserGear, User, Database, GearSix } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Toaster, toast } from 'sonner'
@@ -26,7 +26,7 @@ import { isEnabled as isFirebaseEnabled } from '@/lib/firebase-adapter'
 function App() {
   const [bootComplete, setBootComplete] = useState(false)
   const { units, updateUnits, loading: unitsLoading } = useFirebaseUnits(DEFAULT_UNITS)
-  const { currentUnitId, setCurrentUnitId, loading: unitIdLoading } = useFirebaseCurrentUnit(DEFAULT_UNITS[0].id)
+  const [currentUnitId, setCurrentUnitId] = useLocalStorage<string>('current-unit-id', DEFAULT_UNITS[0].id)
   const { personnelByUnit, updatePersonnel, loading: personnelLoading } = useFirebasePersonnel()
   const [userRole, setUserRole] = useLocalStorage<UserRole>('user-role', 'player')
   const [formOpen, setFormOpen] = useState(false)
@@ -435,7 +435,7 @@ function App() {
   }
 
   // After boot is complete, show loading state if data is still loading
-  if (unitsLoading || unitIdLoading || personnelLoading) {
+  if (unitsLoading || personnelLoading) {
     return <LoadingScreen />
   }
 
