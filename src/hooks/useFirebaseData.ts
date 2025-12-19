@@ -75,38 +75,3 @@ export function useFirebaseUnits(defaultUnits: Unit[]) {
 
   return { units, updateUnits, loading }
 }
-
-export function useFirebaseCurrentUnit(defaultUnitId: string) {
-  const [currentUnitId, setCurrentUnitIdState] = useState<string>(defaultUnitId)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Timeout fallback - don't hang forever
-    const timeout = setTimeout(() => {
-      setLoading(false)
-    }, FIREBASE_TIMEOUT_MS)
-
-    const unsubscribe = firebaseHelpers.subscribeToCurrentUnitId((unitId) => {
-      setCurrentUnitIdState(unitId)
-      setLoading(false)
-      clearTimeout(timeout)
-    }, defaultUnitId)
-
-    return () => {
-      unsubscribe()
-      clearTimeout(timeout)
-    }
-  }, [defaultUnitId])
-
-  const setCurrentUnitId = async (unitId: string) => {
-    setCurrentUnitIdState(unitId)
-    try {
-      await firebaseHelpers.updateCurrentUnitId(unitId)
-    } catch (error) {
-      console.error('Failed to update current unit ID:', error)
-      throw error
-    }
-  }
-
-  return { currentUnitId, setCurrentUnitId, loading }
-}
